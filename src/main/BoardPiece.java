@@ -1,7 +1,7 @@
 package main;
 
 public abstract class BoardPiece {
-	private String name;
+	private String name = "piece";
 	
 	// This method is called by the Board to execute the piece's move, with a value from 1 through 16.
 	// 1 through 8 indicate movement direction, 9 through 16 indicate firing direction
