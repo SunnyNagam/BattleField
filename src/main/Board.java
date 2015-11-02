@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 public class Board extends JPanel implements Runnable{
 	//dimensions
 	public static final int WIDTH = 1200;
-	public static final int HEIGHT = 601;
+	public static final int HEIGHT = 800;
 	//game thread
 	private Thread thread;
 	private boolean running; 
@@ -22,11 +22,16 @@ public class Board extends JPanel implements Runnable{
 	private BufferedImage image;
 	private Graphics2D g;
 	
+	//game vars:
+	int boardSize = 20, pieceSize = HEIGHT/boardSize;
+	BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
+	
 	public void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
 		running = true;
 	}
+	
 	public void run(){								// runs game
 		init();
 
@@ -54,7 +59,11 @@ public class Board extends JPanel implements Runnable{
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		g.setColor(Color.BLACK);
-		g.drawString("Hello world! how original", 100, 100);
+		for(int x=0; x<boardSize; x++)
+			for(int y=0; y<boardSize; y++){
+				g.drawString("Piece", x*pieceSize, y*pieceSize);
+			}
+		
 		
 	}
 
