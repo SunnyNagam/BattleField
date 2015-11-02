@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel implements Runnable{
 	//dimensions
-	public static final int WIDTH = 1300;
+	public static final int WIDTH = 1200;
 	public static final int HEIGHT = 601;
 	//game thread
 	private Thread thread;
