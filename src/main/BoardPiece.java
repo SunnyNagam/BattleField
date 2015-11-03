@@ -9,8 +9,12 @@ public abstract class BoardPiece {
 	// 1  2  3
 	// 4     5
 	// 6  7  8
+	/// non cannon
+	// -2  0  2
+	// -1     1
+	// -2  0  2
 	public abstract int move(BoardPiece[][] board);
-
+	
 	public void setName(String name) {
 		this.name = name;
 	}

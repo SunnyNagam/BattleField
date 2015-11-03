@@ -8,12 +8,15 @@ public class Sunny extends BoardPiece{
 	public int move(BoardPiece[][] board) {
 		int x =0, y=0;
 		
-		for(x=0; x<board.length; x++)					//Finding my x and y
-			for(y=0; y<board[x].length; y++)
-				if(board[x][y].getName()=="Sunny")
+		for(; x<board.length; x++)					//Finding my x and y
+			for(; y<board[x].length; y++)
+				if(board[x][y]!= null &&board[x][y].getName()==getName())
 					break;
-		
-		return 5;
+		System.out.println(x);
+		if(x<board.length)
+			return 5;
+		else
+			return 0;
 	}
 
 }
