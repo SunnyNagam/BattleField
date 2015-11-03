@@ -3,9 +3,8 @@
 	
 	This is the template class for creating your AI for the battlefield game!
 	
-	Wherever you see *NAME* replace with your first name
-	
 	RULES AND INFO:
+	 - Wherever you see 'BoardPieceTemplate', replace with your first name
 	 - If your code returns/encounters an error, your player will be automatically removed from the game
 	 - Do not attempt to code anything that does not involve your player
 	 - You are allowed to add as much code inside and outside of your main method
@@ -14,11 +13,11 @@
 */
 package main;
 
-public class *NAME* extends BoardPiece {
+public class BoardPieceTemplate extends BoardPiece {
 	
 	// This is your class' constructor
-	public *NAME*(){
-		setName("*NAME*");
+	public BoardPieceTemplate(){
+		setName("BoardPieceTemplate");
 	}
 	
 	/* This is your main method
@@ -29,12 +28,12 @@ public class *NAME* extends BoardPiece {
 	    - "bullet"
 	    - other players represented by their first names (ex. "Bob")
 	    
-	    Your method must return an integer value from 1 to 16, inclusive.
-	    1 through 8 indicate movement direction, 9 through 16 indicate firing direction
+	    Your method must return an integer value from 0 to 16, inclusive.
+	    1 through 8 indicate movement direction, 9 through 16 indicate firing direction, 0 does nothing
 	    
 	    MOVE
 	 	1  2  3
-	 	4     5
+	 	4  0  5
 	 	6  7  8
 	 	
 	 	FIRE
