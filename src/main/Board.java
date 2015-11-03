@@ -23,13 +23,22 @@ public class Board extends JPanel implements Runnable{
 	private Graphics2D g;
 	
 	//game vars:
-	int boardSize = 20, pieceSize = HEIGHT/boardSize;
-	BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
+	static int boardSize = 20;
+	int pieceSize = HEIGHT/boardSize;
+	static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
 	
 	public void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
 		running = true;
+		
+		// load and place players
+		loadPlayers();
+	}
+	
+	private static void loadPlayers(){		// load and place players
+		board[0][0] = new Sunny();
+		board[boardSize-1][boardSize-1] = new Wesley();
 	}
 	
 	public void run(){								// runs game
@@ -61,7 +70,7 @@ public class Board extends JPanel implements Runnable{
 		g.setColor(Color.BLACK);
 		for(int x=0; x<boardSize; x++)
 			for(int y=0; y<boardSize; y++){
-				g.drawString("Piece", x*pieceSize, y*pieceSize);
+				g.drawString(board[x][y]==null?"Piece":board[x][y].getName(), x*pieceSize, y*pieceSize + pieceSize);
 			}
 		
 		
