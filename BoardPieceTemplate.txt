@@ -1,0 +1,20 @@
+/*	
+	PLAYER AI TEMPLATE CLASS
+	
+	This is the template class for creating your AI for the battlefield game!
+	
+	Wherever you see *NAME* replace with your first name
+	
+	RULES AND INFO:
+	 - If your code returns/encounters an error, your player will be automatically removed from the game
+	 - Do not attempt to code anything that does not involve your player
+*/
+package main;
+
+public class *NAME* extends BoardPiece {
+	
+	
+	
+
+
+}
