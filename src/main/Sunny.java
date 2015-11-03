@@ -4,7 +4,7 @@ public class Sunny extends BoardPiece{
 	public Sunny(){
 		setName("Sunny");
 	}
-	@Override
+	
 	public int move(BoardPiece[][] board) {
 		int x =0, y=0;
 		
