@@ -68,7 +68,13 @@ public class Board extends JPanel implements Runnable{
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		g.setColor(Color.BLACK);
-		for(int x=0; x<boardSize; x++)
+		
+//		for(int x=0; x<boardSize; x++)			// draw grid
+//			for(int y=0; y<boardSize; y++){
+//				g.drawLine(arg0, arg1, arg2, arg3);;
+//			}
+//		
+		for(int x=0; x<boardSize; x++)			// draw players
 			for(int y=0; y<boardSize; y++){
 				g.drawString(board[x][y]==null?"Piece":board[x][y].getName(), x*pieceSize, y*pieceSize + pieceSize);
 			}
