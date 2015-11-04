@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
@@ -27,8 +29,9 @@ public class Board extends JPanel implements Runnable{
 	static int boardSize = 20;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 1000;
+	long waitTime = 500;
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
+	static ArrayList<Point> playerCoor = new ArrayList<Point>();
 
 	public void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -41,6 +44,7 @@ public class Board extends JPanel implements Runnable{
 
 	private static void loadPlayers(){		// load and place players
 		board[0][0] = new Sunny();
+		playerCoor.add(new Point(0,0));
 		//board[boardSize-1][boardSize-1] = new Wesley();
 	}
 
@@ -92,7 +96,7 @@ public class Board extends JPanel implements Runnable{
 		
 	}
 
-	private void makeMove(int move, int curX, int curY, BoardPiece[][] field){
+	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
 		int speedX = 0, speedY=0;
 		if(move==1){
 			speedX = -1;
@@ -169,6 +173,7 @@ public class Board extends JPanel implements Runnable{
 		}
 		else{
 			board[curX+speedX][curY+speedY] = board[curX][curY];
+			playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
 			//board[curX+speedX][curY+speedY].setName(board[curX][curY].getName());
 			board[curX][curY] = null;
 			
@@ -186,27 +191,28 @@ public class Board extends JPanel implements Runnable{
 
 	private void update() {								// updates current game state
 		
-		//copy of board
+		// Copy of board
 		BoardPiece[][] boardCopy =new BoardPiece[boardSize][boardSize];
 		for(int x=0; x<boardSize; x++)			
 			for(int y=0; y<boardSize; y++){
 				boardCopy[x][y] = board[x][y];
 				//boardCopy[x][y].setName(board[x][y].getName());
 			}
-		//get moves
-		for(int x=0; x<boardSize; x++)			
-			for(int y=0; y<boardSize; y++){
-				if(board[x][y]!=null){
+		//get moves		
+			for(int p=0; p<playerCoor.size(); p++){
+				int x = playerCoor.get(p).x;
+				int y = playerCoor.get(p).y;
 					try{
-						makeMove(board[x][y].move(boardCopy),x,y,board);
+						makeMove(board[x][y].move(boardCopy),
+								x,y,boardCopy,p);
 					}catch(Exception e){
 						e.printStackTrace();
 						System.out.println(board[x][y].getName()+" died due to illegal output. Or code crashing.");
 						killPiece(x,y);
 					}
 				}
-			}
 		//do constant computation
+		System.out.println("yo");
 	}
 
 	private void drawToScreen() {						// scales and draws game with formating

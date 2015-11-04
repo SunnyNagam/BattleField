@@ -9,7 +9,7 @@ public class Sunny extends BoardPiece{
 		int x =0, y=0;
 		boolean found = false;
 		for(; x<board.length; x++){					//Finding my x and y
-			for(; y<board[x].length; y++){
+			for(y=0; y<board[x].length; y++){
 				if(board[x][y]!= null && board[x][y].getName()==getName()){
 					found = true;
 					break;
@@ -17,8 +17,9 @@ public class Sunny extends BoardPiece{
 			}
 			if(found) break;
 		}
-		if(x<board.length-1)
+		if(x<board.length-1||!found){
 			return 5;
+		}
 		else
 			return 0;
 	}
