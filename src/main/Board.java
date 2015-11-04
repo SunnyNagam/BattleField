@@ -26,7 +26,7 @@ public class Board extends JPanel implements Runnable{
 	//game vars:
 	static int boardSize = 20;
 	int pieceSize = HEIGHT/boardSize;
-	static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
+	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
 	long waitTime = 1000;
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
 
@@ -41,7 +41,7 @@ public class Board extends JPanel implements Runnable{
 
 	private static void loadPlayers(){		// load and place players
 		board[0][0] = new Sunny();
-		board[boardSize-1][boardSize-1] = new Wesley();
+		//board[boardSize-1][boardSize-1] = new Wesley();
 	}
 
 	public void run(){								// runs game
@@ -66,7 +66,7 @@ public class Board extends JPanel implements Runnable{
 			}
 			//wait
 			try {
-				Thread.sleep(waitTime);
+				thread.sleep(waitTime);
 			} catch (InterruptedException e){
 				e.printStackTrace();
 			}
@@ -157,7 +157,6 @@ public class Board extends JPanel implements Runnable{
 		else{
 
 		}
-
 		// movement
 		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
 			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
@@ -184,6 +183,7 @@ public class Board extends JPanel implements Runnable{
 	}
 
 	private void update() {								// updates current game state
+		
 		//copy of board
 		BoardPiece[][] boardCopy =new BoardPiece[boardSize][boardSize];
 		for(int x=0; x<boardSize; x++)			
@@ -196,10 +196,11 @@ public class Board extends JPanel implements Runnable{
 			for(int y=0; y<boardSize; y++){
 				if(board[x][y]!=null){
 					try{
-						makeMove(board[x][y].move(boardCopy),x,y,boardCopy);
+						makeMove(board[x][y].move(boardCopy),x,y,board);
 					}catch(Exception e){
+						e.printStackTrace();
 						System.out.println(board[x][y].getName()+" died due to illegal output. Or code crashing.");
-						killPiece(x,y);
+						//killPiece(x,y);
 					}
 				}
 			}

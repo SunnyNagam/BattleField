@@ -7,13 +7,17 @@ public class Sunny extends BoardPiece{
 	
 	public int move(BoardPiece[][] board) {
 		int x =0, y=0;
-		
-		for(; x<board.length; x++)					//Finding my x and y
-			for(; y<board[x].length; y++)
-				if(board[x][y]!= null &&board[x][y].getName()==getName())
+		boolean found = false;
+		for(; x<board.length; x++){					//Finding my x and y
+			for(; y<board[x].length; y++){
+				if(board[x][y]!= null && board[x][y].getName()==getName()){
+					found = true;
 					break;
-		System.out.println(x);
-		if(x<board.length)
+				}
+			}
+			if(found) break;
+		}
+		if(x<board.length-1)
 			return 5;
 		else
 			return 0;
