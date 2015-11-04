@@ -157,6 +157,8 @@ public class Board extends JPanel implements Runnable{
 		else{
 
 		}
+		if(curX+speedX>=20||curX+speedX<0||curY+speedY>=20||curY+speedY<0)
+			return;
 		// movement
 		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
 			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
@@ -200,7 +202,7 @@ public class Board extends JPanel implements Runnable{
 					}catch(Exception e){
 						e.printStackTrace();
 						System.out.println(board[x][y].getName()+" died due to illegal output. Or code crashing.");
-						//killPiece(x,y);
+						killPiece(x,y);
 					}
 				}
 			}
