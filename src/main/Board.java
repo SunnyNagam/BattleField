@@ -26,10 +26,10 @@ public class Board extends JPanel implements Runnable{
 	private Graphics2D g;
 
 	//game vars:
-	static int boardSize = 20;
+	static int boardSize = 15;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 500;
+	long waitTime = 0;
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
 	static ArrayList<Point> playerCoor = new ArrayList<Point>();
 
@@ -37,15 +37,25 @@ public class Board extends JPanel implements Runnable{
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
 		running = true;
-
+		board = new BoardPiece[boardSize][boardSize];
 		// load and place players
 		loadPlayers();
+		draw();
 	}
 
 	private static void loadPlayers(){		// load and place players
+		playerCoor.clear();
 		board[0][0] = new Sunny();
 		playerCoor.add(new Point(0,0));
-		//board[boardSize-1][boardSize-1] = new Wesley();
+		board[boardSize-1][0] = new Wesley();
+		playerCoor.add(new Point(boardSize-1,0));
+		for(int x=0; x<20; x++){
+			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
+			board[a][b] = new Sunny();
+			playerCoor.add(new Point(a,b));
+			board[a][b].setName(String.valueOf(x));
+
+		}
 	}
 
 	public void run(){								// runs game
@@ -90,10 +100,13 @@ public class Board extends JPanel implements Runnable{
 
 		for(int x=0; x<boardSize; x++)			// draw players
 			for(int y=0; y<boardSize; y++){
-				g.drawString(board[x][y]==null?"Piece":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
+				g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
+				if(board[x][y]!=null){
+					g.setColor(Color.blue);
+					g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
+				}
 			}
 
-		
 	}
 
 	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
@@ -159,38 +172,39 @@ public class Board extends JPanel implements Runnable{
 
 		}
 		else{
-
+			return;
 		}
-		if(curX+speedX>=20||curX+speedX<0||curY+speedY>=20||curY+speedY<0)
+		if(curX+speedX>=boardSize||curX+speedX<0||curY+speedY>=boardSize||curY+speedY<0)
 			return;
 		// movement
 		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
 			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
-			killPiece(curX,curY);
+			killPiece(curX,curY,coorInd);
 		}
-		else if(field[curX+speedX][curY+speedY]!=null){
-			// do nothing
+		else if(field[curX+speedX][curY+speedY]==null){
+			board[curX+speedX][curY+speedY] = board[curX][curY];
+			//System.out.print(playerCoor.get(coorInd).x+" to -> ");
+			playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
+			//System.out.println(playerCoor.get(coorInd).x+" //"+board[curX][curY].getName());
+			board[curX][curY] = null;
 		}
 		else{
-			board[curX+speedX][curY+speedY] = board[curX][curY];
-			playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
-			//board[curX+speedX][curY+speedY].setName(board[curX][curY].getName());
-			board[curX][curY] = null;
-			
+			//other player is here
+			//do nothing i guess
 		}
-
 		//shooting
 
 	}
 
-	private void killPiece(int x, int y){
+	private void killPiece(int x, int y,int p){
 		if(board[x][y]!=null&& board[x][y].getName()!="Bullet")		//don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);
 		board[x][y] = null;
+		playerCoor.remove(p);
 	}
 
 	private void update() {								// updates current game state
-		
+
 		// Copy of board
 		BoardPiece[][] boardCopy =new BoardPiece[boardSize][boardSize];
 		for(int x=0; x<boardSize; x++)			
@@ -199,20 +213,23 @@ public class Board extends JPanel implements Runnable{
 				//boardCopy[x][y].setName(board[x][y].getName());
 			}
 		//get moves		
-			for(int p=0; p<playerCoor.size(); p++){
-				int x = playerCoor.get(p).x;
-				int y = playerCoor.get(p).y;
-					try{
-						makeMove(board[x][y].move(boardCopy),
-								x,y,boardCopy,p);
-					}catch(Exception e){
-						e.printStackTrace();
-						System.out.println(board[x][y].getName()+" died due to illegal output. Or code crashing.");
-						killPiece(x,y);
-					}
-				}
+		for(int p=0; p<playerCoor.size(); p++){
+			int x = playerCoor.get(p).x;
+			int y = playerCoor.get(p).y;
+			String focus = board[x][y].getName();
+			try{
+				makeMove(board[x][y].move(boardCopy)
+						,x,y,board,p);
+			}catch(Exception e){
+				e.printStackTrace();
+				System.out.println(x+","+y);
+				for(int a=0; a<playerCoor.size(); a++)
+					System.out.println("player at "+playerCoor.get(a).x+", "+playerCoor.get(a).y);
+				System.out.println(focus+" died due to illegal output. Or code crashing.");
+				killPiece(x,y,p);
+			}
+		}
 		//do constant computation
-		System.out.println("yo");
 	}
 
 	private void drawToScreen() {						// scales and draws game with formating
@@ -220,7 +237,7 @@ public class Board extends JPanel implements Runnable{
 		g2.drawImage(image, 0, 0, WIDTH ,  HEIGHT , null);
 		g2.dispose();
 	}
-	public int rand(double d, double e){
+	public static int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
 

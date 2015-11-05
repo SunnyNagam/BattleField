@@ -22,4 +22,7 @@ public abstract class BoardPiece {
 	public String getName() {
 		return name;
 	}
+	public int rand(double d, double e){
+		return (int) (d + (int)(Math.random()*((e-d)+1)));
+	}
 }

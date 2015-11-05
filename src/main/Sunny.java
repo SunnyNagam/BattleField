@@ -17,11 +17,14 @@ public class Sunny extends BoardPiece{
 			}
 			if(found) break;
 		}
-		if(x<board.length-1||!found){
-			return 5;
-		}
-		else
-			return 0;
+//		if(x<board.length-1||!found){
+//			if(board[x+1][y]==null)
+//				return 5;
+//			else if(x>0)
+//				return 4;
+//		}
+//		return 0;
+		return rand(0,8);
 	}
 
 }
