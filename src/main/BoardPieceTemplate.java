@@ -18,6 +18,7 @@ public class BoardPieceTemplate extends BoardPiece {
 	// This is your class' constructor
 	public BoardPieceTemplate(){
 		setName("BoardPieceTemplate");
+		setOwner(getName());
 	}
 	
 	/* This is your main method

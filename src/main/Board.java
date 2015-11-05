@@ -188,9 +188,18 @@ public class Board extends JPanel implements Runnable{
 		if(curX+speedX>=boardSize||curX+speedX<0||curY+speedY>=boardSize||curY+speedY<0)   // if player tries to move outside the board (arrayOutOfBounds) they lose a turn
 			return;
 		// movement
+<<<<<<< HEAD
+		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
+			System.out.println(board[curY][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s Bullet and died!");
+			killPiece(curX,curY);
+		}
+		else if(field[curX+speedX][curY+speedY]!=null){
+			// do nothing
+=======
 		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){		// player dies if he walks into a bullet duh
 			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
 			killPiece(curX,curY,coorInd);
+>>>>>>> master
 		}
 		else if(field[curX+speedX][curY+speedY]==null){		// legitimate move, moving to new coordinates
 			board[curX+speedX][curY+speedY] = board[curX][curY];
@@ -248,7 +257,19 @@ public class Board extends JPanel implements Runnable{
 		g2.drawImage(image, 0, 0, WIDTH ,  HEIGHT , null);
 		g2.dispose();
 	}
+<<<<<<< HEAD
+	
+	// Check to see if a bullet collides with something
+	public void checkCollides(BoardPiece[][] field, int curX, int curY){
+		if (field[curX-1][curY-1] != null)
+			
+		field[curX-1][curY-1] = new Bullet(1, field[curX][curY].getName());	// Creates a bullet in the proper location, with the 
+	}
+	
+	public int rand(double d, double e){
+=======
 	public static int rand(double d, double e){
+>>>>>>> master
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
 
@@ -266,6 +287,4 @@ public class Board extends JPanel implements Runnable{
 			thread.start();
 		}
 	}
-
-
 }
