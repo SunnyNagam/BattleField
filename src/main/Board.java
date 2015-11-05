@@ -31,8 +31,8 @@ public class Board extends JPanel implements Runnable{
 	private Graphics2D g;
 
 	// Game vars
-	static int boardSize = 150;
-	static int numRandBots = 100;
+	static int boardSize = 30;
+	static int numRandBots = 10;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
 	long waitTime = 100;
