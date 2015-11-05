@@ -165,7 +165,7 @@ public class Board extends JPanel implements Runnable{
 			return;
 		// movement
 		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
-			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
+			System.out.println(board[curY][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s Bullet and died!");
 			killPiece(curX,curY);
 		}
 		else if(field[curX+speedX][curY+speedY]!=null){
@@ -220,6 +220,14 @@ public class Board extends JPanel implements Runnable{
 		g2.drawImage(image, 0, 0, WIDTH ,  HEIGHT , null);
 		g2.dispose();
 	}
+	
+	// Check to see if a bullet collides with something
+	public void checkCollides(BoardPiece[][] field, int curX, int curY){
+		if (field[curX-1][curY-1] != null)
+			
+		field[curX-1][curY-1] = new Bullet(1, field[curX][curY].getName());	// Creates a bullet in the proper location, with the 
+	}
+	
 	public int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
@@ -238,6 +246,4 @@ public class Board extends JPanel implements Runnable{
 			thread.start();
 		}
 	}
-
-
 }
