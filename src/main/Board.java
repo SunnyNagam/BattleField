@@ -45,11 +45,13 @@ public class Board extends JPanel implements Runnable{
 
 	private static void loadPlayers(){		// load and place players
 		playerCoor.clear();
+		
 		board[0][0] = new Sunny();
 		playerCoor.add(new Point(0,0));
 		board[boardSize-1][0] = new Wesley();
 		playerCoor.add(new Point(boardSize-1,0));
-		for(int x=0; x<20; x++){
+		
+		for(int x=0; x<20; x++){	// loading t20 more random players just to stress test, comment out as needed 
 			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
 			board[a][b] = new Sunny();
 			playerCoor.add(new Point(a,b));
@@ -101,7 +103,7 @@ public class Board extends JPanel implements Runnable{
 		for(int x=0; x<boardSize; x++)			// draw players
 			for(int y=0; y<boardSize; y++){
 				g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
-				if(board[x][y]!=null){
+				if(board[x][y]!=null){		//fills the square blue if it's a player or bullet (easier to see until we get sprites)
 					g.setColor(Color.blue);
 					g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
 				}
@@ -110,8 +112,16 @@ public class Board extends JPanel implements Runnable{
 	}
 
 	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
+		/* Given the move, current x and y, the board, and the index in playerCoor:
+		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the
+		 * players y velocity. For example if player entered 4 as thier move according to this control scheme:
+		 *   1  2  3
+		 *   4  0  5
+		 *	 6  7  8
+		 * the player's speedX would be -1 (move to the left) and speedY would be 0 (only moving to the left)
+		 */
 		int speedX = 0, speedY=0;
-		if(move==1){
+		if(move==1){			//these if and else statments set the player's velocity based on move 
 			speedX = -1;
 			speedY = -1;
 		}
@@ -147,7 +157,7 @@ public class Board extends JPanel implements Runnable{
 			speedX = 1;
 			speedY = 1;
 		}
-		else if(move ==9){
+		else if(move ==9){	//shooting TODO
 
 		}
 		else if(move ==10){
@@ -171,17 +181,18 @@ public class Board extends JPanel implements Runnable{
 		else if(move ==16){
 
 		}
-		else{
+		else{			//player loses a turn if move is outside the domain 0<=move<=16
 			return;
 		}
-		if(curX+speedX>=boardSize||curX+speedX<0||curY+speedY>=boardSize||curY+speedY<0)
+		
+		if(curX+speedX>=boardSize||curX+speedX<0||curY+speedY>=boardSize||curY+speedY<0)   // if player tries to move outside the board (arrayOutOfBounds) they lose a turn
 			return;
 		// movement
-		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
+		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){		// player dies if he walks into a bullet duh
 			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
 			killPiece(curX,curY,coorInd);
 		}
-		else if(field[curX+speedX][curY+speedY]==null){
+		else if(field[curX+speedX][curY+speedY]==null){		// legitimate move, moving to new coordinates
 			board[curX+speedX][curY+speedY] = board[curX][curY];
 			//System.out.print(playerCoor.get(coorInd).x+" to -> ");
 			playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
@@ -189,11 +200,11 @@ public class Board extends JPanel implements Runnable{
 			board[curX][curY] = null;
 		}
 		else{
-			//other player is here
-			//do nothing i guess
+			//player is trying to move into a place where another player is 
+			//do nothing i guess (they lose a turn) (may change this?)
 		}
 		//shooting
-
+		//TODO
 	}
 
 	private void killPiece(int x, int y,int p){
