@@ -1,10 +1,13 @@
 package main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.TextArea;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -29,10 +32,16 @@ public class Board extends JPanel implements Runnable{
 	// Image vars
 	private BufferedImage image;
 	private Graphics2D g;
+	
+	//Information Log Text Box
+	private TextArea textArea;
+	// Size of the text log
+	private int log_length = 100;   // 100 characters per line
+	private ArrayList<String> log;
 
 	// Game vars
-	static int boardSize = 30;
-	static int numRandBots = 10;
+	static int boardSize = 100;
+	static int numRandBots = 30;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
 	long waitTime = 100;
@@ -50,6 +59,17 @@ public class Board extends JPanel implements Runnable{
 		g = (Graphics2D) image.getGraphics();
 		running = true;
 		board = new BoardPiece[boardSize][boardSize];
+		
+		
+		// Creating info log
+		textArea = new TextArea("Battle has begun.", 10, 50, TextArea.SCROLLBARS_VERTICAL_ONLY);
+		textArea.setBounds(HEIGHT, 0, WIDTH-HEIGHT, HEIGHT);
+		add(textArea);										// Add it to the screen
+		setLayout(new BorderLayout());						// Required
+		textArea.setEditable(false);						// Preventing the box from being editable
+		textArea.setFont(new Font("Serif", Font.PLAIN, 19));// Setting font
+		log = new ArrayList<String>();
+		
 		// load and place players
 		loadPlayers();
 		draw();
@@ -63,13 +83,13 @@ public class Board extends JPanel implements Runnable{
 		board[boardSize-1][0] = new Wesley();
 		playerCoor.add(new Point(boardSize-1,0));
 
-		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
-			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
-			board[a][b] = new Sunny();
-			playerCoor.add(new Point(a,b));
-			board[a][b].setName(String.valueOf(x));
-
-		}
+//		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
+//			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
+//			board[a][b] = new Sunny();
+//			playerCoor.add(new Point(a,b));
+//			board[a][b].setName(String.valueOf(x));
+//
+//		}
 	}
 
 	// Runs game
@@ -190,7 +210,8 @@ public class Board extends JPanel implements Runnable{
 			if (move < 9){	// Executing player movement
 				// Movement
 				if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
-					System.out.println(board[curX][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!");
+					log.add(align((board[curX][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
+					
 					killPiece(curX,curY,coorInd);
 				}
 				else if(field[curX+speedX][curY+speedY]!=null){
@@ -306,7 +327,12 @@ public class Board extends JPanel implements Runnable{
 			}
 
 		//do constant computation
-
+		String printLog="";
+		for(int x=0; x<log.size(); x++){
+			printLog+=log.get(x);
+			printLog+="\n";
+		}
+		textArea.setText(printLog);
 
 	}
 
@@ -314,6 +340,26 @@ public class Board extends JPanel implements Runnable{
 		Graphics g2 = getGraphics();
 		g2.drawImage(image, 0, 0, WIDTH,  HEIGHT, null);
 		g2.dispose();
+	}
+	
+	public String align(String input){							 	//Aligns text
+		char[] text = input.toCharArray(); 		 	//Converts the content of scene into char array
+		for (int i = 0, count = 0, word = 0; i < text.length; i++){
+			count++;											 	//i means the point in the array, count tracks how far into each line the text is
+			word++;												 	//word tracks how long the current word is
+			if (input.charAt(i) == ' ')	 		 	//If a space is found, the length of the word is reset
+				word = 0;
+			else if (input.charAt(i) == (char)10)
+				count = 0;											//Resetting the count on a new line
+			if (count >= log_length){									 	//If the length of the text exceeds max,
+				i-=word;										 	//Move the 'place' back to before the current word
+				count = 0;										 	//Change it to a new line and reset values
+				word = 0;
+				text[i] = (char)10;
+			}
+
+		}
+		return(String.valueOf(text));
 	}
 
 	public static int rand(double d, double e){
