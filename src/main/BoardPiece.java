@@ -27,12 +27,10 @@ public abstract class BoardPiece {
 	public String getName() {
 		return name;
 	}
-<<<<<<< HEAD
 	public String getOwner() {
 		return owner;
-=======
+	}
 	public int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
->>>>>>> master
 	}
 }
