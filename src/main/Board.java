@@ -12,6 +12,10 @@ import java.util.LinkedList;
 import javax.swing.JPanel;
 
 public class Board extends JPanel implements Runnable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Dimensions
 	public static final int WIDTH = 1200;
 	public static final int HEIGHT = 800;
@@ -220,8 +224,11 @@ public class Board extends JPanel implements Runnable{
 					// TODO increase player kill
 				}
 			}
-			else
-				board[curX+speedX][curY+speedY] = new Bullet(move, field[curX][curY].getName());	// Creates a bullet in the proper location,
+			else{	// Moving the bullet
+				board[curX+speedX][curY+speedY] = new Bullet(move, field[curX][curY].getName());
+				board[curX][curY] = null;
+				bulletCoor.set(coorInd, new Point(curX+speedX, curY+speedY));	// Updating the bullet's coordinates
+			}
 		
 		}
 
