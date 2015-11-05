@@ -26,10 +26,10 @@ public class Board extends JPanel implements Runnable{
 	private Graphics2D g;
 
 	//game vars:
-	static int boardSize = 20;
+	static int boardSize = 15;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 500;
+	long waitTime = 0;
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
 	static ArrayList<Point> playerCoor = new ArrayList<Point>();
 
@@ -37,15 +37,27 @@ public class Board extends JPanel implements Runnable{
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
 		running = true;
-
+		board = new BoardPiece[boardSize][boardSize];
 		// load and place players
 		loadPlayers();
+		draw();
 	}
 
 	private static void loadPlayers(){		// load and place players
+		playerCoor.clear();
+		
 		board[0][0] = new Sunny();
 		playerCoor.add(new Point(0,0));
-		//board[boardSize-1][boardSize-1] = new Wesley();
+		board[boardSize-1][0] = new Wesley();
+		playerCoor.add(new Point(boardSize-1,0));
+		
+		for(int x=0; x<20; x++){	// loading t20 more random players just to stress test, comment out as needed 
+			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
+			board[a][b] = new Sunny();
+			playerCoor.add(new Point(a,b));
+			board[a][b].setName(String.valueOf(x));
+
+		}
 	}
 
 	public void run(){								// runs game
@@ -90,15 +102,26 @@ public class Board extends JPanel implements Runnable{
 
 		for(int x=0; x<boardSize; x++)			// draw players
 			for(int y=0; y<boardSize; y++){
-				g.drawString(board[x][y]==null?"Piece":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
+				g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
+				if(board[x][y]!=null){		//fills the square blue if it's a player or bullet (easier to see until we get sprites)
+					g.setColor(Color.blue);
+					g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
+				}
 			}
 
-		
 	}
 
 	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
+		/* Given the move, current x and y, the board, and the index in playerCoor:
+		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the
+		 * players y velocity. For example if player entered 4 as thier move according to this control scheme:
+		 *   1  2  3
+		 *   4  0  5
+		 *	 6  7  8
+		 * the player's speedX would be -1 (move to the left) and speedY would be 0 (only moving to the left)
+		 */
 		int speedX = 0, speedY=0;
-		if(move==1){
+		if(move==1){			//these if and else statments set the player's velocity based on move 
 			speedX = -1;
 			speedY = -1;
 		}
@@ -134,7 +157,7 @@ public class Board extends JPanel implements Runnable{
 			speedX = 1;
 			speedY = 1;
 		}
-		else if(move ==9){
+		else if(move ==9){	//shooting TODO
 
 		}
 		else if(move ==10){
@@ -158,39 +181,50 @@ public class Board extends JPanel implements Runnable{
 		else if(move ==16){
 
 		}
-		else{
-
+		else{			//player loses a turn if move is outside the domain 0<=move<=16
+			return;
 		}
-		if(curX+speedX>=20||curX+speedX<0||curY+speedY>=20||curY+speedY<0)
+		
+		if(curX+speedX>=boardSize||curX+speedX<0||curY+speedY>=boardSize||curY+speedY<0)   // if player tries to move outside the board (arrayOutOfBounds) they lose a turn
 			return;
 		// movement
+<<<<<<< HEAD
 		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
 			System.out.println(board[curY][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s Bullet and died!");
 			killPiece(curX,curY);
 		}
 		else if(field[curX+speedX][curY+speedY]!=null){
 			// do nothing
+=======
+		if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){		// player dies if he walks into a bullet duh
+			System.out.println(board[curY][curY].getName()+" walked into a Bullet and died.");
+			killPiece(curX,curY,coorInd);
+>>>>>>> master
+		}
+		else if(field[curX+speedX][curY+speedY]==null){		// legitimate move, moving to new coordinates
+			board[curX+speedX][curY+speedY] = board[curX][curY];
+			//System.out.print(playerCoor.get(coorInd).x+" to -> ");
+			playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
+			//System.out.println(playerCoor.get(coorInd).x+" //"+board[curX][curY].getName());
+			board[curX][curY] = null;
 		}
 		else{
-			board[curX+speedX][curY+speedY] = board[curX][curY];
-			playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
-			//board[curX+speedX][curY+speedY].setName(board[curX][curY].getName());
-			board[curX][curY] = null;
-			
+			//player is trying to move into a place where another player is 
+			//do nothing i guess (they lose a turn) (may change this?)
 		}
-
 		//shooting
-
+		//TODO
 	}
 
-	private void killPiece(int x, int y){
+	private void killPiece(int x, int y,int p){
 		if(board[x][y]!=null&& board[x][y].getName()!="Bullet")		//don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);
 		board[x][y] = null;
+		playerCoor.remove(p);
 	}
 
 	private void update() {								// updates current game state
-		
+
 		// Copy of board
 		BoardPiece[][] boardCopy =new BoardPiece[boardSize][boardSize];
 		for(int x=0; x<boardSize; x++)			
@@ -199,20 +233,23 @@ public class Board extends JPanel implements Runnable{
 				//boardCopy[x][y].setName(board[x][y].getName());
 			}
 		//get moves		
-			for(int p=0; p<playerCoor.size(); p++){
-				int x = playerCoor.get(p).x;
-				int y = playerCoor.get(p).y;
-					try{
-						makeMove(board[x][y].move(boardCopy),
-								x,y,boardCopy,p);
-					}catch(Exception e){
-						e.printStackTrace();
-						System.out.println(board[x][y].getName()+" died due to illegal output. Or code crashing.");
-						killPiece(x,y);
-					}
-				}
+		for(int p=0; p<playerCoor.size(); p++){
+			int x = playerCoor.get(p).x;
+			int y = playerCoor.get(p).y;
+			String focus = board[x][y].getName();
+			try{
+				makeMove(board[x][y].move(boardCopy)
+						,x,y,board,p);
+			}catch(Exception e){
+				e.printStackTrace();
+				System.out.println(x+","+y);
+				for(int a=0; a<playerCoor.size(); a++)
+					System.out.println("player at "+playerCoor.get(a).x+", "+playerCoor.get(a).y);
+				System.out.println(focus+" died due to illegal output. Or code crashing.");
+				killPiece(x,y,p);
+			}
+		}
 		//do constant computation
-		System.out.println("yo");
 	}
 
 	private void drawToScreen() {						// scales and draws game with formating
@@ -220,6 +257,7 @@ public class Board extends JPanel implements Runnable{
 		g2.drawImage(image, 0, 0, WIDTH ,  HEIGHT , null);
 		g2.dispose();
 	}
+<<<<<<< HEAD
 	
 	// Check to see if a bullet collides with something
 	public void checkCollides(BoardPiece[][] field, int curX, int curY){
@@ -229,6 +267,9 @@ public class Board extends JPanel implements Runnable{
 	}
 	
 	public int rand(double d, double e){
+=======
+	public static int rand(double d, double e){
+>>>>>>> master
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
 
