@@ -24,7 +24,7 @@ public class Sunny extends BoardPiece{
 //				return 4;
 //		}
 //		return 0;
-		return rand(0,8);
+		return rand(0,16);
 	}
 
 }

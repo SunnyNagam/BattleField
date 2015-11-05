@@ -31,10 +31,11 @@ public class Board extends JPanel implements Runnable{
 	private Graphics2D g;
 
 	// Game vars
-	static int boardSize = 15;
+	static int boardSize = 150;
+	static int numRandBots = 100;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 0;
+	long waitTime = 100;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -62,7 +63,7 @@ public class Board extends JPanel implements Runnable{
 		board[boardSize-1][0] = new Wesley();
 		playerCoor.add(new Point(boardSize-1,0));
 
-		for(int x=0; x<20; x++){	// Loading 20 more random players just to stress test, comment out as needed 
+		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
 			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
 			board[a][b] = new Sunny();
 			playerCoor.add(new Point(a,b));
@@ -115,10 +116,15 @@ public class Board extends JPanel implements Runnable{
 
 		for(int x=0; x<boardSize; x++)			// draw players
 			for(int y=0; y<boardSize; y++){
-				g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
+				//g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
 				if(board[x][y]!=null){		//fills the square blue if it's a player or bullet (easier to see until we get sprites)
-					g.setColor(Color.blue);
+					if(board[x][y].getName()=="Bullet"){
+						g.setColor(Color.red);
+					}
+					else
+						g.setColor(Color.blue);
 					g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
+					g.setColor(Color.black);
 				}
 			}
 
@@ -173,10 +179,15 @@ public class Board extends JPanel implements Runnable{
 		else{			// Player loses a turn if move is outside the domain 0 <= move <= 16
 			return;
 		}
+		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
+			if(board[curX][curY].getName()=="Bullet"){
+				board[curX][curY] = null;
+				bulletCoor.remove(coorInd);
+			}
+			return;
+		}
 		if (board[curX][curY].getName() != "Bullet"){	//Executing player actions
-			if (move < 10){	// Executing player movement
-				if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0)   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
-					return;
+			if (move < 9){	// Executing player movement
 				// Movement
 				if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
 					System.out.println(board[curX][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!");
@@ -201,26 +212,31 @@ public class Board extends JPanel implements Runnable{
 			else {	// Executing shooting
 				// Checking to see if the space is occupied.
 				if (field[curX+speedX][curY+speedY] != null){
-					if (field[curX+speedX][curY+speedY].getName() == "Bullet")	// If two bullets collide, both bullets annihilate each other
+					if (field[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
 						board[curX+speedX][curY+speedY] = null;
+					}
 					else {
 						System.out.println(field[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
-						killPiece(curX+speedX, curY+speedY, coorInd);
+						board[curX+speedX][curY+speedY] = null;
 						// TODO increase player kill
 					}
 				}
 
-				else
+				else{
 					board[curX+speedX][curY+speedY] = new Bullet(move, field[curX][curY].getName());	// Creates a bullet in the proper location,
+					bulletCoor.add(new Point(curX+speedX,curY+speedY));
+				}
 			}
 		}
 		else { // Executing bullet actions
 			if (field[curX+speedX][curY+speedY] != null){
-				if (field[curX+speedX][curY+speedY].getName() == "Bullet")	// If two bullets collide, both bullets annihilate each other
+				if (field[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
 					board[curX+speedX][curY+speedY] = null;
+					board[curX][curY] = null;
+					bulletCoor.remove(coorInd);
+				}
 				else {
 					System.out.println(field[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getOwner() + "!");
-					killPiece(curX+speedX, curY+speedY, coorInd);
 					// TODO increase player kill
 				}
 			}
@@ -253,7 +269,14 @@ public class Board extends JPanel implements Runnable{
 		for (int p = 0; p < playerCoor.size(); p++){
 			int x = playerCoor.get(p).x;
 			int y = playerCoor.get(p).y;
-			String focus = board[x][y].getName();
+			String focus ="";
+			try{
+				focus = board[x][y].getName();
+			}catch(Exception e){
+				playerCoor.remove(p);
+				p--;
+				continue;
+			}
 			try{
 				makeMove(board[x][y].move(boardCopy)
 						,x,y,board,p);
@@ -272,7 +295,14 @@ public class Board extends JPanel implements Runnable{
 			for (int b = 0; b < bulletCoor.size(); b++){
 				int x = bulletCoor.get(b).x;
 				int y = bulletCoor.get(b).y;
-				makeMove(board[x][y].getDirection(), x, y, board, b);
+				String focus ="";
+				try{
+					focus = board[x][y].getName();
+				}catch(Exception e){
+					bulletCoor.remove(b);
+					continue;
+				}
+				makeMove(board[x][y].move(board), x, y, board, b);
 			}
 
 		//do constant computation
