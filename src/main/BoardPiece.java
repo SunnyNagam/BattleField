@@ -2,8 +2,12 @@ package main;
 
 public abstract class BoardPiece {
 	private String name = "piece";
+	
+	// Bullet specific vars
 	// Tracks who fired the bullet, so that the kills can be tracked
 	private String owner;
+	// Value from 1 through 8 - does not change, as the bullet does not change direction
+	private int direction = 0;
 	
 	// This method is called by the Board to execute the piece's move, with a value from 1 through 16.
 	// 1 through 8 indicate movement direction, 9 through 16 indicate firing direction
@@ -32,5 +36,13 @@ public abstract class BoardPiece {
 	}
 	public int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
 	}
 }
