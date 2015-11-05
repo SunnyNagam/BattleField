@@ -254,7 +254,16 @@ public class Board extends JPanel implements Runnable{
 	
 	// Check to see if a bullet collides with something
 	public void checkCollides(BoardPiece[][] field, int curX, int curY){
-		if (field[curX-1][curY-1] != null)
+		// Checking to see if the space is occupied.
+		if (field[curX-1][curY-1] != null){
+			if (field[curX-1][curY-1].getName() == "Bullet")
+				field[curX-1][curY-1] = null;
+			else {
+				System.out.println(field[curX-1][curY-1].getName() + " has been killed by ")
+				field[curX-1][curY-1].getName
+			}
+				
+		}
 			
 		field[curX-1][curY-1] = new Bullet(1, field[curX][curY].getName());	// Creates a bullet in the proper location, with the 
 	}
