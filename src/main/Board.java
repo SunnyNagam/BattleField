@@ -42,7 +42,7 @@ public class Board extends JPanel implements Runnable{
 	boolean drawGrid = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 0;
+	long waitTime = 100;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -210,8 +210,8 @@ public class Board extends JPanel implements Runnable{
 		//Executing player actions
 		if (move < 9){	// Executing  movement
 			// Movement
-			if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
-				log+=new String(align((board[curX][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
+			if(board[curX+speedX][curY+speedY]!=null && board[curX+speedX][curY+speedY].getName()=="Bullet"){
+				log+=new String(align((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
 				log+="\n";
 				//somehow increase player kill
 				//delete the bullet you ran into
@@ -246,7 +246,7 @@ public class Board extends JPanel implements Runnable{
 			}
 
 			else{
-				board[curX+speedX][curY+speedY] = new Bullet(move-8, field[curX][curY].getName());	// Creates a bullet in the proper location,
+				board[curX+speedX][curY+speedY] = new Bullet(move-8, field[curX][curY].getName(),coorInd);	// Creates a bullet in the proper location,
 				bulletCoor.add(new Point(curX+speedX,curY+speedY));
 			}
 		}

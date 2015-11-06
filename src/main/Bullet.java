@@ -2,10 +2,11 @@ package main;
 
 public class Bullet extends BoardPiece{
 	
-	public Bullet(int direction, String owner){
+	public Bullet(int direction, String owner, int ownInd){
 		setName("Bullet");
 		setDirection(direction);
 		setOwner(owner);
+		setOwnerInd(ownInd);
 	}
 
 	public int move(BoardPiece[][] board) {
