@@ -150,7 +150,7 @@ public class Board extends JPanel implements Runnable{
 			}
 
 	}
-
+	
 	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
 		/* Given the move, current x and y, the board, and the index in playerCoor:
 		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the

@@ -1,11 +1,16 @@
 package main;
 
+import java.util.ArrayList;
+
 public class Wesley extends BoardPiece{
+	ArrayList<Integer> ints = new ArrayList<Integer>();
+	int count =0;
 	public Wesley(){
 		setName("Wesley");
 	}
 	@Override
 	public int move(BoardPiece[][] board) {
+		ints.add(count++);
 		int x =0, y=0;
 		boolean found = false;
 		for(; x<board.length; x++){					//Finding my x and y
