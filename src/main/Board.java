@@ -37,8 +37,8 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 100;
-	static int numRandBots = 100;
+	static int boardSize = 400;
+	static int numRandBots = 1000;
 	boolean drawGrid = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
@@ -51,8 +51,8 @@ public class Board extends JPanel implements Runnable{
 	static ArrayList<Point> playerCoor = new ArrayList<Point>();
 	// Store the coordinates of all the bullets
 	static ArrayList<Point> bulletCoor = new ArrayList<Point>();
-	
-	
+
+
 	public void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
@@ -207,76 +207,132 @@ public class Board extends JPanel implements Runnable{
 			}
 			return;
 		}
-		if (board[curX][curY].getName() != "Bullet"){	//Executing player actions
-			if (move < 9){	// Executing  movement
-				// Movement
-				if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
-					log+=new String(align((board[curX][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
-					log+="\n";
-					//somehow increase player kill
-					//delete the bullet you ran into
-					killPiece(curX,curY,coorInd);
-					return;
-				}
-				else if(field[curX+speedX][curY+speedY]!=null){
-					// Do nothing, player tried to walk into another player
-					return;
-				}
-				else if(field[curX+speedX][curY+speedY]==null){		// Legitimate move, moving to new coordinates
-					board[curX+speedX][curY+speedY] = board[curX][curY];
-					//System.out.print(playerCoor.get(coorInd).x+" to -> ");
-					playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
-					//System.out.println(playerCoor.get(coorInd).x+" //"+board[curX][curY].getName());
-					board[curX][curY] = null;
-					return;
-				}
+		//Executing player actions
+		if (move < 9){	// Executing  movement
+			// Movement
+			if(field[curX+speedX][curY+speedY]!=null && field[curX+speedX][curY+speedY].getName()=="Bullet"){
+				log+=new String(align((board[curX][curY].getName()+" walked into " + field[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
+				log+="\n";
+				//somehow increase player kill
+				//delete the bullet you ran into
+				killPiece(curX,curY,coorInd);
+				return;
 			}
-			else {	// Executing shooting (move>=9)
-				// Checking to see if the space is occupied.
-				if (field[curX+speedX][curY+speedY] != null){
-					if (field[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
-						board[curX+speedX][curY+speedY] = null;
-					}
-					else {
-						log+=new String(field[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
-						log+="\n";
-						board[curX+speedX][curY+speedY] = null;
-						// TODO increase player kill
-					}
-				}
-
-				else{
-					board[curX+speedX][curY+speedY] = new Bullet(move-8, field[curX][curY].getName());	// Creates a bullet in the proper location,
-					bulletCoor.add(new Point(curX+speedX,curY+speedY));
-				}
+			else if(field[curX+speedX][curY+speedY]!=null){
+				// Do nothing, player tried to walk into another player
+				return;
 			}
-		}
-		else { // Executing bullet actions		// runs if bullet regardless of move index
-			if (board[curX+speedX][curY+speedY] != null){
-				if (board[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
-					board[curX+speedX][curY+speedY] = null;
-					board[curX][curY] = null;
-					bulletCoor.remove(coorInd);
-					return;
-				}
-				else {
-					log+=new String(board[curX+speedX][curY+speedY].getName() + " has been killed by " + board[curX][curY].getOwner() + "!");
-					log+="\n";
-					board[curX+speedX][curY+speedY] = null;
-					board[curX][curY] = null;
-					bulletCoor.remove(coorInd);
-					return;
-					// TODO increase player kill
-				}
-			}
-			else{	// Moving the bullet
+			else if(field[curX+speedX][curY+speedY]==null){		// Legitimate move, moving to new coordinates
 				board[curX+speedX][curY+speedY] = board[curX][curY];
-				bulletCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
+				System.out.println(board[curX][curY].getName());
+				//System.out.print(playerCoor.get(coorInd).x+" to -> ");
+				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));	//bullet ran this...
+				//System.out.println(playerCoor.get(coorInd).x+" //"+board[curX][curY].getName());
 				board[curX][curY] = null;
 				return;
 			}
-
 		}
+		else {	// Executing shooting (move>=9)
+			// Checking to see if the space is occupied.
+			if (field[curX+speedX][curY+speedY] != null){
+				if (field[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
+					board[curX+speedX][curY+speedY] = null;
+				}
+				else {
+					log+=new String(field[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
+					log+="\n";
+					board[curX+speedX][curY+speedY] = null;
+					// TODO increase player kill
+				}
+			}
+
+			else{
+				board[curX+speedX][curY+speedY] = new Bullet(move-8, field[curX][curY].getName());	// Creates a bullet in the proper location,
+				bulletCoor.add(new Point(curX+speedX,curY+speedY));
+			}
+		}
+	}
+	private void makeMoveBullet(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
+		/* Given the move, current x and y, the board, and the index in playerCoor:
+		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the
+		 * players y velocity. For example if player entered 4 as thier move according to this control scheme:
+		 *   1  2  3
+		 *   4  0  5
+		 *	 6  7  8
+		 * the player's speedX would be -1 (move to the left) and speedY would be 0 (only moving to the left)
+		 */
+		int speedX = 0, speedY=0;
+		if(move == 1 || move == 9){			// If and else statements set the player's/bullet's velocity (direction) based on move's value
+			speedX = -1;
+			speedY = -1;
+		}
+		else if(move == 0){
+			speedX = 0;
+			speedY = 0;
+		}
+		else if(move == 2 ){
+			speedX = 0;
+			speedY = -1;
+		}
+		else if(move == 3){
+			speedX = 1;
+			speedY = -1;
+		}
+		else if(move == 4){
+			speedX = -1;
+			speedY = 0;
+		}
+		else if(move == 5){
+			speedX = 1;
+			speedY = 0;
+		}
+		else if(move == 6){
+			speedX = -1;
+			speedY = 1;
+		}
+		else if(move == 7){
+			speedX = 0;
+			speedY = 1;
+		}
+		else if(move == 8){
+			speedX = 1;
+			speedY = 1;
+		}
+		else{			// Player loses a turn if move is outside the domain 0 <= move <= 8
+			return;
+		}
+		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
+			if(board[curX][curY].getName()=="Bullet"){
+				board[curX][curY] = null;
+				bulletCoor.remove(coorInd);
+			}
+			return;
+		}
+		// Executing bullet actions		
+		if (board[curX+speedX][curY+speedY] != null){
+			if (board[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
+				board[curX+speedX][curY+speedY] = null;
+				board[curX][curY] = null;
+				bulletCoor.remove(coorInd);
+				return;
+			}
+			else {
+				log+=new String(board[curX+speedX][curY+speedY].getName() + " has been killed by " + board[curX][curY].getOwner() + "!");
+				log+="\n";
+				board[curX+speedX][curY+speedY] = null;
+				board[curX][curY] = null;
+				bulletCoor.remove(coorInd);
+				return;
+				// TODO increase player kill
+			}
+		}
+		else{	// Moving the bullet
+			board[curX+speedX][curY+speedY] = board[curX][curY];
+			bulletCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
+			board[curX][curY] = null;
+			return;
+		}
+
 
 	}
 
@@ -331,10 +387,10 @@ public class Board extends JPanel implements Runnable{
 					bulletCoor.remove(b);
 					continue;
 				}
-				makeMove(board[x][y].move(board), x, y, board, b);
+				makeMoveBullet(board[x][y].move(board), x, y, board, b);
 				if(playerCoor.size()==1){
 					//only one guy left
-					 log = "";
+					log = "";
 					for(int n=0; n<4; n++)
 						log+="\n";
 					log+=board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
