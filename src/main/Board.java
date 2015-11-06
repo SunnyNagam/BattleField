@@ -37,8 +37,8 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 400;
-	static int numRandBots = 1000;
+	static int boardSize = 100;
+	static int numRandBots = boardSize*20;
 	boolean drawGrid = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
@@ -224,7 +224,6 @@ public class Board extends JPanel implements Runnable{
 			}
 			else if(field[curX+speedX][curY+speedY]==null){		// Legitimate move, moving to new coordinates
 				board[curX+speedX][curY+speedY] = board[curX][curY];
-				System.out.println(board[curX][curY].getName());
 				//System.out.print(playerCoor.get(coorInd).x+" to -> ");
 				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));	//bullet ran this...
 				//System.out.println(playerCoor.get(coorInd).x+" //"+board[curX][curY].getName());
@@ -394,7 +393,7 @@ public class Board extends JPanel implements Runnable{
 					for(int n=0; n<4; n++)
 						log+="\n";
 					log+=board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
-					for(int n=0; n<20; n++)
+					for(int n=0; n<5; n++)
 						log+="\n";
 					textArea.setText(log);
 					break;
@@ -403,8 +402,7 @@ public class Board extends JPanel implements Runnable{
 
 		//do constant computation
 		textArea.setText(log);
-
-		textArea.setCaretPosition(textArea.getText().length());
+		textArea.setCaretPosition(textArea.getText().length()); //auto scrool to bottom
 	}
 
 	private void drawToScreen() {						// scales and draws game with formating
