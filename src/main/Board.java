@@ -219,11 +219,11 @@ public class Board extends JPanel implements Runnable{
 				board[curX+speedX][curY+speedY] = null;
 				return;
 			}
-			else if(field[curX+speedX][curY+speedY]!=null){
+			else if(board[curX+speedX][curY+speedY]!=null){
 				// Do nothing, player tried to walk into another player
 				return;
 			}
-			else if(field[curX+speedX][curY+speedY]==null){		// Legitimate move, moving to new coordinates
+			else{		// Legitimate move, moving to new coordinates
 				board[curX+speedX][curY+speedY] = board[curX][curY];
 				//System.out.print(playerCoor.get(coorInd).x+" to -> ");
 				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));	//bullet ran this...
