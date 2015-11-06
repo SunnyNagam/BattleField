@@ -214,8 +214,9 @@ public class Board extends JPanel implements Runnable{
 				log+=new String(align((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
 				log+="\n";
 				//somehow increase player kill
+				killPiece(curX,curY,coorInd);	//kills player
 				//delete the bullet you ran into
-				killPiece(curX,curY,coorInd);
+				board[curX+speedX][curY+speedY] = null;
 				return;
 			}
 			else if(field[curX+speedX][curY+speedY]!=null){
@@ -233,12 +234,12 @@ public class Board extends JPanel implements Runnable{
 		}
 		else {	// Executing shooting (move>=9)
 			// Checking to see if the space is occupied.
-			if (field[curX+speedX][curY+speedY] != null){
-				if (field[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
+			if (board[curX+speedX][curY+speedY] != null){
+				if (board[curX+speedX][curY+speedY].getName() == "Bullet"){	// If two bullets collide, both bullets annihilate each other
 					board[curX+speedX][curY+speedY] = null;
 				}
 				else {
-					log+=new String(field[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
+					log+=new String(board[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
 					log+="\n";
 					board[curX+speedX][curY+speedY] = null;
 					// TODO increase player kill
