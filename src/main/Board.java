@@ -37,12 +37,12 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 80;
-	static int numRandBots = 500;
+	static int boardSize = 100;
+	static int numRandBots = 100;
 	boolean drawGrid = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 100;
+	long waitTime = 0;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -217,10 +217,6 @@ public class Board extends JPanel implements Runnable{
 			return;
 		}
 		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
-			if(board[curX][curY].getName()=="Bullet"){
-				board[curX][curY] = null;
-				bulletCoor.remove(coorInd);
-			}
 			return;
 		}
 		//Executing player actions
@@ -258,7 +254,6 @@ public class Board extends JPanel implements Runnable{
 					log+=new String(board[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
 					log+="\n";
 					killPiece(curX+speedX,curY+speedY,coorInd,board[curX][curY].getName());	//kills player
-					// TODO increase player kill
 				}
 			}
 
@@ -339,7 +334,6 @@ public class Board extends JPanel implements Runnable{
 				board[curX][curY] = null;
 				bulletCoor.remove(coorInd);
 				return;
-				// TODO increase player kill
 			}
 		}
 		else{	// Moving the bullet
@@ -397,6 +391,17 @@ public class Board extends JPanel implements Runnable{
 			}catch(Exception e){
 				playerCoor.remove(p);
 				p--;
+				if(playerCoor.size()==1){
+					//only one guy left
+					log = "";
+					for(int n=0; n<4; n++)
+						log+="\n";
+					log+=board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
+					for(int n=0; n<5; n++)
+						log+="\n";
+					textArea.setText(log);
+					break;
+				}
 				continue;
 			}
 			try{
@@ -405,8 +410,6 @@ public class Board extends JPanel implements Runnable{
 			}catch(Exception e){
 				e.printStackTrace();
 				System.out.println(x + "," + y);
-				for (int a = 0; a < playerCoor.size(); a++)
-					System.out.println("Player at " + playerCoor.get(a).x + ", " + playerCoor.get(a).y);
 				System.out.println(focus + " died due to illegal output. Or code crashing.");
 				killPiece(x,y,p,"IllegalOutput");
 			}
@@ -424,17 +427,7 @@ public class Board extends JPanel implements Runnable{
 					continue;
 				}
 				makeMoveBullet(board[x][y].move(board), x, y, board, b);
-				if(playerCoor.size()==1){
-					//only one guy left
-					log = "";
-					for(int n=0; n<4; n++)
-						log+="\n";
-					log+=board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
-					for(int n=0; n<5; n++)
-						log+="\n";
-					textArea.setText(log);
-					break;
-				}
+				
 			}
 
 		//do constant computation
