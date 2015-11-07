@@ -37,8 +37,8 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 100;
-	static int numRandBots = 100;
+	static int boardSize = 50;
+	static int numRandBots = 30;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
@@ -54,7 +54,7 @@ public class Board extends JPanel implements Runnable{
 	static ArrayList<Point> bulletCoor = new ArrayList<Point>();
 
 	//miscellaneous variables
-	int killBoardCount = 5;
+	int killBoardCount = 10;
 	int[] topKills = new int[killBoardCount];
 	String[] topKillers = new String[killBoardCount];
 
@@ -96,9 +96,13 @@ public class Board extends JPanel implements Runnable{
 
 		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
 			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
-			board[a][b] = new Sunny();
-			playerCoor.add(new Point(a,b));
-			board[a][b].setName(String.valueOf("Player "+x));
+			while(board[a][b]==null){
+				board[a][b] = new Sunny();
+				playerCoor.add(new Point(a,b));
+				board[a][b].setName(String.valueOf("Player "+x));
+				a = rand(0,boardSize-1);
+				b = rand(0,boardSize-1);
+			}
 
 		}
 	}
@@ -345,16 +349,38 @@ public class Board extends JPanel implements Runnable{
 			graveyard.add(board[x][y]);					//graveyard for post game statistics maybe
 
 		int kills=0;
-		for(int bx=0; bx<boardSize; bx++)						// award kill to killer
-			for(int by=0; by<boardSize; by++)
-				if(board[bx][by]!=null&&board[bx][by].getName().equals(killer)){
-					board[bx][by].incrementKills();
-					kills = board[bx][by].getKills();
-				}
-
+//		for(int bx=0; bx<boardSize; bx++)						// award kill to killer
+//			for(int by=0; by<boardSize; by++)
+//				if(board[bx][by]!=null&&board[bx][by].getName().equals(killer)){
+//					board[bx][by].incrementKills();
+//					kills = board[bx][by].getKills();
+//				}
+		for(int px=0; px<playerCoor.size(); px++){
+			if(board[playerCoor.get(px).x][playerCoor.get(px).y]!=null&&board[playerCoor.get(px).x][playerCoor.get(px).y].getName().equals(killer)){
+				board[playerCoor.get(px).x][playerCoor.get(px).y].incrementKills();
+				kills = board[playerCoor.get(px).x][playerCoor.get(px).y].getKills();
+				break;
+			}
+		}
 		board[x][y] = null;				// remove killed player
 
 		//recalculate kill board (leaderboard)
+		for(int n=0; n<killBoardCount; n++){
+			if(topKillers[n].equals(killer)){
+				topKills[n]++;
+				int ind = n;
+				while(ind!=-1&&topKills[ind]<=topKills[n]){		// changing killer's postion on leaderboard if nessesarry
+					String tname = topKillers[n];
+					topKillers[n] = topKillers[ind];
+					topKillers[ind] = tname;
+					int tkill = topKills[n];
+					topKills[n] = topKills[ind];
+					topKills[ind] = tkill;
+					ind--;
+				}
+				return;
+			}
+		}
 		String curKiller = killer;
 		for(int pos=0; pos<killBoardCount; pos++){
 			if(kills>topKills[pos]){
