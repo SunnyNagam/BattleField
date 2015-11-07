@@ -52,6 +52,11 @@ public class Board extends JPanel implements Runnable{
 	// Store the coordinates of all the bullets
 	static ArrayList<Point> bulletCoor = new ArrayList<Point>();
 
+	//miscellaneous variables
+	int killBoardCount = 5;
+	int[] topKills = new int[killBoardCount];
+	String[] topKillers = new String[killBoardCount];
+
 
 	public void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -68,6 +73,12 @@ public class Board extends JPanel implements Runnable{
 		textArea.setEditable(false);						// Preventing the box from being editable
 		textArea.setFont(new Font("Serif", Font.PLAIN, 19));// Setting font
 		log ="";
+
+		//clearing kill board
+		for(int x=0; x<killBoardCount; x++){
+			topKills[x] = 0;
+			topKillers[x] = "";
+		}
 
 		// load and place players
 		loadPlayers();
@@ -148,9 +159,14 @@ public class Board extends JPanel implements Runnable{
 					g.setColor(Color.black);
 				}
 			}
-
+		
+		//drawing leaderboard
+		g.drawString("LEADERBOARD", HEIGHT+20, HEIGHT/2+20);
+		for(int x=0; x<killBoardCount; x++){
+			g.drawString(new String((x+1)+".)    "+topKillers[x]+"    Kills: "+topKills[x]), HEIGHT+25, (HEIGHT/2+20)+((x+1)*20));
+		}
 	}
-	
+
 	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
 		/* Given the move, current x and y, the board, and the index in playerCoor:
 		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the
@@ -214,7 +230,7 @@ public class Board extends JPanel implements Runnable{
 				log+=new String(align((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!")));
 				log+="\n";
 				//somehow increase player kill
-				killPiece(curX,curY,coorInd);	//kills player
+				killPiece(curX,curY,coorInd,board[curX+speedX][curY+speedY].getOwner());	//kills player
 				//delete the bullet you ran into
 				board[curX+speedX][curY+speedY] = null;
 				return;
@@ -226,7 +242,7 @@ public class Board extends JPanel implements Runnable{
 			else{		// Legitimate move, moving to new coordinates
 				board[curX+speedX][curY+speedY] = board[curX][curY];
 				//System.out.print(playerCoor.get(coorInd).x+" to -> ");
-				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));	//bullet ran this...
+				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
 				//System.out.println(playerCoor.get(coorInd).x+" //"+board[curX][curY].getName());
 				board[curX][curY] = null;
 				return;
@@ -241,7 +257,7 @@ public class Board extends JPanel implements Runnable{
 				else {
 					log+=new String(board[curX+speedX][curY+speedY].getName() + " has been killed by " + field[curX][curY].getName() + " at point blank!");
 					log+="\n";
-					board[curX+speedX][curY+speedY] = null;
+					killPiece(curX+speedX,curY+speedY,coorInd,board[curX][curY].getName());	//kills player
 					// TODO increase player kill
 				}
 			}
@@ -301,7 +317,7 @@ public class Board extends JPanel implements Runnable{
 		else{			// Player loses a turn if move is outside the domain 0 <= move <= 8
 			return;
 		}
-		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
+		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If bullet tries to move outside the board (arrayOutOfBounds) destroy bullet
 			if(board[curX][curY].getName()=="Bullet"){
 				board[curX][curY] = null;
 				bulletCoor.remove(coorInd);
@@ -319,7 +335,7 @@ public class Board extends JPanel implements Runnable{
 			else {
 				log+=new String(board[curX+speedX][curY+speedY].getName() + " has been killed by " + board[curX][curY].getOwner() + "!");
 				log+="\n";
-				board[curX+speedX][curY+speedY] = null;
+				killPiece(curX+speedX,curY+speedY,coorInd,board[curX][curY].getOwner());	//kills player
 				board[curX][curY] = null;
 				bulletCoor.remove(coorInd);
 				return;
@@ -336,11 +352,32 @@ public class Board extends JPanel implements Runnable{
 
 	}
 
-	private void killPiece(int x, int y, int p){
+	private void killPiece(int x, int y, int p, String killer){
 		if (board[x][y] != null && board[x][y].getName() != "Bullet")		// Don't add nothings and bullets to the graveyard
-			graveyard.add(board[x][y]);
-		board[x][y] = null;
-		playerCoor.remove(p);
+			graveyard.add(board[x][y]);					//graveyard for post game statistics maybe
+
+		int kills=0;
+		for(int bx=0; bx<boardSize; bx++)						// award kill to killer
+			for(int by=0; by<boardSize; by++)
+				if(board[bx][by]!=null&&board[bx][by].getName().equals(killer)){
+					board[bx][by].incrementKills();
+					kills = board[bx][by].getKills();
+				}
+
+		board[x][y] = null;				// remove killed player
+
+		//recalculate kill board (leaderboard)
+		String curKiller = killer;
+		for(int pos=0; pos<killBoardCount; pos++){
+			if(kills>topKills[pos]){
+				int temp = kills;
+				kills = topKills[pos];
+				topKills[pos] = temp;
+				String tem = curKiller;
+				curKiller = topKillers[pos];
+				topKillers[pos] = tem;
+			}
+		}
 	}
 
 	private void update() {								// Updates current game state
@@ -371,7 +408,7 @@ public class Board extends JPanel implements Runnable{
 				for (int a = 0; a < playerCoor.size(); a++)
 					System.out.println("Player at " + playerCoor.get(a).x + ", " + playerCoor.get(a).y);
 				System.out.println(focus + " died due to illegal output. Or code crashing.");
-				killPiece(x,y,p);
+				killPiece(x,y,p,"IllegalOutput");
 			}
 		}
 

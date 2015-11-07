@@ -6,7 +6,6 @@ public class Bullet extends BoardPiece{
 		setName("Bullet");
 		setDirection(direction);
 		setOwner(owner);
-		setOwnerInd(ownInd);
 	}
 
 	public int move(BoardPiece[][] board) {

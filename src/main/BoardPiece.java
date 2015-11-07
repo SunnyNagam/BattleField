@@ -6,7 +6,6 @@ public abstract class BoardPiece {
 	// Bullet specific vars
 	// Tracks who fired the bullet, so that the kills can be tracked
 	private String owner;
-	private int ownerInd;
 	// The number of kills scored by this class (if player)
 	private int kills=0;
 	// Value from 1 through 8 - does not change, as the bullet does not change direction
@@ -53,10 +52,7 @@ public abstract class BoardPiece {
 	public void setKills(int kills) {
 		this.kills = kills;
 	}
-	public int getOwnerInd() {
-		return ownerInd;
-	}
-	public void setOwnerInd(int ownerInd) {
-		this.ownerInd = ownerInd;
+	public void incrementKills(){
+		kills++;
 	}
 }
