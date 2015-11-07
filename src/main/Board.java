@@ -37,7 +37,7 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 100;
+	static int boardSize = 80;
 	static int numRandBots = 500;
 	boolean drawGrid = false;
 	int pieceSize = HEIGHT/boardSize;
@@ -413,13 +413,12 @@ public class Board extends JPanel implements Runnable{
 		}
 
 		// Move Bullets
-		for (int times = 0; times < 1; times++)		// Speed of bullets (distance covered per turn, currently set at two tiles per turn)
+		for (int times = 0; times <1; times++)		// Speed of bullets (distance covered per turn, currently set at two tiles per turn)
 			for (int b = 0; b < bulletCoor.size(); b++){
 				int x = bulletCoor.get(b).x;
 				int y = bulletCoor.get(b).y;
-				String focus ="";
 				try{
-					focus = board[x][y].getName();
+					board[x][y].getName();
 				}catch(Exception e){
 					bulletCoor.remove(b);
 					continue;
