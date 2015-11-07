@@ -40,6 +40,7 @@ public class Board extends JPanel implements Runnable{
 	static int boardSize = 100;
 	static int numRandBots = 100;
 	boolean drawGrid = false;
+	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
 	long waitTime = 0;
@@ -111,8 +112,8 @@ public class Board extends JPanel implements Runnable{
 		while(running){
 			start = System.nanoTime();
 			draw();
-
-			update();
+			if(!gameover)
+				update();
 			drawToScreen();
 
 			elapsed = System.nanoTime() - start;
@@ -400,6 +401,7 @@ public class Board extends JPanel implements Runnable{
 					for(int n=0; n<5; n++)
 						log+="\n";
 					textArea.setText(log);
+					gameover = true;
 					break;
 				}
 				continue;
