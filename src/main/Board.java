@@ -37,8 +37,8 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 50;
-	static int numRandBots = 30;
+	static int boardSize = 100;
+	static int numRandBots = 10;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
@@ -96,13 +96,13 @@ public class Board extends JPanel implements Runnable{
 
 		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
 			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
-			while(board[a][b]==null){
-				board[a][b] = new Sunny();
-				playerCoor.add(new Point(a,b));
-				board[a][b].setName(String.valueOf("Player "+x));
+			while(board[a][b]!=null){
 				a = rand(0,boardSize-1);
 				b = rand(0,boardSize-1);
 			}
+			board[a][b] = new Sunny();
+			playerCoor.add(new Point(a,b));
+			board[a][b].setName(String.valueOf("Player "+x));
 
 		}
 	}
@@ -368,7 +368,7 @@ public class Board extends JPanel implements Runnable{
 		for(int n=0; n<killBoardCount; n++){
 			if(topKillers[n].equals(killer)){
 				topKills[n]++;
-				int ind = n;
+				int ind = n-1;
 				while(ind!=-1&&topKills[ind]<=topKills[n]){		// changing killer's postion on leaderboard if nessesarry
 					String tname = topKillers[n];
 					topKillers[n] = topKillers[ind];
