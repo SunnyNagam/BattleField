@@ -43,7 +43,7 @@ public class Board extends JPanel implements Runnable{
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 0;
+	long waitTime = 10;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -349,12 +349,6 @@ public class Board extends JPanel implements Runnable{
 			graveyard.add(board[x][y]);					//graveyard for post game statistics maybe
 
 		int kills=0;
-//		for(int bx=0; bx<boardSize; bx++)						// award kill to killer
-//			for(int by=0; by<boardSize; by++)
-//				if(board[bx][by]!=null&&board[bx][by].getName().equals(killer)){
-//					board[bx][by].incrementKills();
-//					kills = board[bx][by].getKills();
-//				}
 		for(int px=0; px<playerCoor.size(); px++){
 			if(board[playerCoor.get(px).x][playerCoor.get(px).y]!=null&&board[playerCoor.get(px).x][playerCoor.get(px).y].getName().equals(killer)){
 				board[playerCoor.get(px).x][playerCoor.get(px).y].incrementKills();
@@ -410,16 +404,18 @@ public class Board extends JPanel implements Runnable{
 				focus = board[x][y].getName();
 			}catch(Exception e){
 				playerCoor.remove(p);
+				addToLog("KillConfirmed");
 				p--;
 				if(playerCoor.size()==1){
 					//only one guy left
-					log = "";
+					//log = "";
 					for(int n=0; n<4; n++)
 						log+="\n";
 					log+=board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
 					for(int n=0; n<5; n++)
 						log+="\n";
 					textArea.setText(log);
+					textArea.setCaretPosition(textArea.getText().length()); //auto scrool to bottom
 					gameover = true;
 					break;
 				}
@@ -431,7 +427,6 @@ public class Board extends JPanel implements Runnable{
 			}catch(Exception e){
 				//e.printStackTrace();
 				System.out.println(focus + " did nothing due to illegal output. Or code crashing.");
-				killPiece(x,y,p,"IllegalOutput");
 			}
 		}
 
