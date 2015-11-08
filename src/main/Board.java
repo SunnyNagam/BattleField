@@ -347,7 +347,11 @@ public class Board extends JPanel implements Runnable{
 	private void killPiece(int x, int y, int p, String killer){
 		if (board[x][y] != null && board[x][y].getName() != "Bullet")		// Don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);					//graveyard for post game statistics maybe
-
+		if(killer.equals(board[x][y].getName())){
+			board[x][y] = null;
+			return;
+		}
+			
 		int kills=0;
 		for(int px=0; px<playerCoor.size(); px++){
 			if(board[playerCoor.get(px).x][playerCoor.get(px).y]!=null&&board[playerCoor.get(px).x][playerCoor.get(px).y].getName().equals(killer)){

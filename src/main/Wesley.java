@@ -30,6 +30,6 @@ public class Wesley extends BoardPiece{
 //			return 4;
 //		}
 //		return 0;
-		return rand(6,16);
+		return rand(0,16);
 	}
 }
