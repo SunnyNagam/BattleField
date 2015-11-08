@@ -37,13 +37,13 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 100;
-	static int numRandBots = 100;
+	static int boardSize = 10;
+	static int numRandBots = 40;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 10;
+	long waitTime = 0;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -159,6 +159,7 @@ public class Board extends JPanel implements Runnable{
 						g.setColor(Color.red);
 						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
 						g.setColor(Color.black);
+						//g.drawString(String.valueOf(board[x][y].getDirection()),x*pieceSize,y*pieceSize);
 					}
 					else{
 						g.setColor(Color.blue);
@@ -348,10 +349,10 @@ public class Board extends JPanel implements Runnable{
 	private void killPiece(int x, int y, String killer){
 		if (board[x][y] != null && board[x][y].getName() != "Bullet")		// Don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);					//graveyard for post game statistics maybe
-		if(killer.equals(board[x][y].getName())){
-			board[x][y] = null;
-			return;
-		}
+//		if(killer.equals(board[x][y].getName())){
+//			board[x][y] = null;
+//			return;
+//		}
 			
 		int kills=0;
 		for(int px=0; px<playerCoor.size(); px++){
@@ -430,12 +431,9 @@ public class Board extends JPanel implements Runnable{
 						,x,y,board,p);
 			}catch(Exception e){
 				//e.printStackTrace();
-				System.out.println(focus + " did nothing due to illegal output. Or code crashing.");
+				//System.out.println(focus + " did nothing due to illegal output. Or code crashing.");
 			}
 		}
-//		for(int x=0; x<bulletCoor.size(); x++){
-//			System.out.println(board[bulletCoor.get(x).x][bulletCoor.get(x).y].getOwner());
-//		}
 		// Move Bullets
 		for (int times = 0; times <1; times++)		// Speed of bullets (distance covered per turn, currently set at two tiles per turn)
 			for (int b = 0; b < bulletCoor.size(); b++){
@@ -445,6 +443,7 @@ public class Board extends JPanel implements Runnable{
 					board[x][y].getName();
 				}catch(Exception e){
 					bulletCoor.remove(b);
+					b--;
 					continue;
 				}
 				makeMoveBullet(board[x][y].move(board), x, y, board, b);
