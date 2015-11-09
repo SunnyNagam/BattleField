@@ -100,6 +100,8 @@ public class Board extends JPanel implements Runnable{
 				a = rand(0,boardSize-1);
 				b = rand(0,boardSize-1);
 			}
+			// Players are added here
+
 			board[a][b] = new Wesley();
 			playerCoor.add(new Point(a,b));
 			board[a][b].setName(String.valueOf("Player "+x));
@@ -128,7 +130,7 @@ public class Board extends JPanel implements Runnable{
 			catch(Exception e){
 				e.printStackTrace();
 			}
-			//wait
+			// Wait
 			try {
 				thread.sleep(waitTime);
 			} catch (InterruptedException e){
@@ -165,11 +167,11 @@ public class Board extends JPanel implements Runnable{
 						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
 						g.setColor(Color.black);
 					}
-					
+
 				}
 			}
-		
-		//drawing leaderboard
+
+		// Drawing leaderboard
 		g.drawString("LEADERBOARD", HEIGHT+20, HEIGHT/2+20);
 		for(int x=0; x<killBoardCount; x++){
 			g.drawString(new String((x+1)+".)    "+topKillers[x]+"    Kills: "+topKills[x]), HEIGHT+25, (HEIGHT/2+20)+((x+1)*20));
@@ -225,16 +227,16 @@ public class Board extends JPanel implements Runnable{
 		else{			// Player loses a turn if move is outside the domain 0 <= move <= 16
 			return;
 		}
-//		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
-//			return;
-//		}
+		//		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
+		//			return;
+		//		}
 		//Executing player actions
 		if (move < 9){	// Executing  movement
 			// Movement
 			if(board[curX+speedX][curY+speedY]!=null && board[curX+speedX][curY+speedY].getName().equals("Bullet")){
 				if(board[curX+speedX][curY+speedY].getName().equals(board[curX][curY].getOwner()))
 					addToLog("why is this happening????");
-				addToLog((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!"));
+				addToLog((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet12345678901234 and died!"));
 				//somehow increase player kill
 				killPiece(curX,curY,board[curX+speedX][curY+speedY].getOwner());	//kills player
 				//delete the bullet you ran into
@@ -350,11 +352,11 @@ public class Board extends JPanel implements Runnable{
 	private void killPiece(int x, int y, String killer){
 		if (board[x][y] != null && board[x][y].getName() != "Bullet")		// Don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);					//graveyard for post game statistics maybe
-//		if(killer.equals(board[x][y].getName())){
-//			board[x][y] = null;
-//			return;
-//		}
-			
+		//		if(killer.equals(board[x][y].getName())){
+		//			board[x][y] = null;
+		//			return;
+		//		}
+
 		int kills=0;
 		for(int px=0; px<playerCoor.size(); px++){
 			if(board[playerCoor.get(px).x][playerCoor.get(px).y]!=null&&board[playerCoor.get(px).x][playerCoor.get(px).y].getName().equals(killer)){
@@ -363,14 +365,14 @@ public class Board extends JPanel implements Runnable{
 				break;
 			}
 		}
-		board[x][y] = null;				// remove killed player
+		board[x][y] = null;				// Remove killed player
 
-		//recalculate kill board (leaderboard)
+		// Recalculate kill board (leaderboard)
 		for(int n=0; n<killBoardCount; n++){
 			if(topKillers[n].equals(killer)){
 				topKills[n]++;
 				int ind = n-1;
-				while(ind!=-1&&topKills[ind]<=topKills[n]){		// changing killer's postion on leaderboard if nessesarry
+				while(ind !=- 1 && topKills[ind] <= topKills[n]){		// changing killer's position on leaderboard if necessary
 					String tname = topKillers[n];
 					topKillers[n] = topKillers[ind];
 					topKillers[ind] = tname;
@@ -406,14 +408,11 @@ public class Board extends JPanel implements Runnable{
 		for (int p = 0; p < playerCoor.size(); p++){
 			int x = playerCoor.get(p).x;
 			int y = playerCoor.get(p).y;
-			String focus ="";
-			try{
-				focus = board[x][y].getName();
-			}catch(Exception e){
+			if(board[x][y]==null){
 				playerCoor.remove(p);
 				p--;
 				if(playerCoor.size()==1){
-					//only one guy left
+					// Only one guy left
 					//log = "";
 					for(int n=0; n<4; n++)
 						log+="\n";
@@ -421,7 +420,7 @@ public class Board extends JPanel implements Runnable{
 					for(int n=0; n<5; n++)
 						log+="\n";
 					textArea.setText(log);
-					textArea.setCaretPosition(textArea.getText().length()); //auto scrool to bottom
+					textArea.setCaretPosition(textArea.getText().length()); // Auto scroll to bottom
 					gameover = true;
 					break;
 				}
@@ -436,7 +435,7 @@ public class Board extends JPanel implements Runnable{
 			}
 		}
 		// Move Bullets
-		for (int times = 0; times <1; times++)		// Speed of bullets (distance covered per turn, currently set at two tiles per turn)
+		for (int times = 0; times < 2; times++)		// Speed of bullets (distance covered per turn, currently set at two tiles per turn)
 			for (int b = 0; b < bulletCoor.size(); b++){
 				int x = bulletCoor.get(b).x;
 				int y = bulletCoor.get(b).y;
@@ -448,41 +447,20 @@ public class Board extends JPanel implements Runnable{
 					continue;
 				}
 				makeMoveBullet(board[x][y].move(board), x, y, board, b);
-				
-			}
 
-		//do constant computation
+			}
 	}
+
 	private void addToLog(String add){
 		log+=add+"\n";
 		textArea.setText(log);
-		textArea.setCaretPosition(textArea.getText().length()); //auto scrool to bottom
+		textArea.setCaretPosition(textArea.getText().length()); // Auto scroll to bottom
 	}
 
-	private void drawToScreen() {						// scales and draws game with formating
+	private void drawToScreen() {						// Draws game with formating
 		Graphics g2 = getGraphics();
 		g2.drawImage(image, 0, 0, WIDTH,  HEIGHT, null);
 		g2.dispose();
-	}
-
-	public String align(String input){							 	//Aligns text
-		char[] text = input.toCharArray(); 		 	//Converts the content of scene into char array
-		for (int i = 0, count = 0, word = 0; i < text.length; i++){
-			count++;											 	//i means the point in the array, count tracks how far into each line the text is
-			word++;												 	//word tracks how long the current word is
-			if (input.charAt(i) == ' ')	 		 	//If a space is found, the length of the word is reset
-				word = 0;
-			else if (input.charAt(i) == (char)10)
-				count = 0;											//Resetting the count on a new line
-			if (count >= log_length){									 	//If the length of the text exceeds max,
-				i-=word;										 	//Move the 'place' back to before the current word
-				count = 0;										 	//Change it to a new line and reset values
-				word = 0;
-				text[i] = (char)10;
-			}
-
-		}
-		return(String.valueOf(text));
 	}
 
 	public static int rand(double d, double e){
