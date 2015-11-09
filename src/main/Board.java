@@ -53,9 +53,11 @@ public class Board extends JPanel implements Runnable{
 	// Store the coordinates of all the bullets
 	static ArrayList<Point> bulletCoor = new ArrayList<Point>();
 
-	//miscellaneous variables
+	// Leaderboard variables
 	int killBoardCount = 10;
+	// The highest kills
 	int[] topKills = new int[killBoardCount];
+	// The players who got those kills
 	String[] topKillers = new String[killBoardCount];
 
 
@@ -75,13 +77,13 @@ public class Board extends JPanel implements Runnable{
 		textArea.setFont(new Font("Serif", Font.PLAIN, 19));// Setting font
 		log ="";
 
-		//clearing kill board
+		// Clearing kill board
 		for(int x=0; x<killBoardCount; x++){
 			topKills[x] = 0;
 			topKillers[x] = "";
 		}
 
-		// load and place players
+		// Load and place players
 		loadPlayers();
 		draw();
 	}
@@ -236,7 +238,7 @@ public class Board extends JPanel implements Runnable{
 			if(board[curX+speedX][curY+speedY]!=null && board[curX+speedX][curY+speedY].getName().equals("Bullet")){
 				if(board[curX+speedX][curY+speedY].getName().equals(board[curX][curY].getOwner()))
 					addToLog("why is this happening????");
-				addToLog((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet12345678901234 and died!"));
+				addToLog((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!"));
 				//somehow increase player kill
 				killPiece(curX,curY,board[curX+speedX][curY+speedY].getOwner());	//kills player
 				//delete the bullet you ran into
@@ -369,31 +371,46 @@ public class Board extends JPanel implements Runnable{
 
 		// Recalculate kill board (leaderboard)
 		for(int n=0; n<killBoardCount; n++){
-			if(topKillers[n].equals(killer)){
-				topKills[n]++;
-				int ind = n-1;
-				while(ind !=- 1 && topKills[ind] <= topKills[n]){		// changing killer's position on leaderboard if necessary
-					String tname = topKillers[n];
-					topKillers[n] = topKillers[ind];
-					topKillers[ind] = tname;
-					int tkill = topKills[n];
-					topKills[n] = topKills[ind];
-					topKills[ind] = tkill;
-					ind--;
+			if (topKillers[n] == killer){
+				topKills[n] = kills;
+				break;
+			}
+			if (topKills[n] < kills){
+				for (int a = killBoardCount-1; a > n ;a--){	//Shuffle everything from the bottom up
+					topKills[a] = topKills[a-1];
+					topKillers[a] = topKillers[a-1];
 				}
-				return;
+				topKills[n] = kills;
+				topKillers[n] = killer;
+				break;
+
 			}
-		}
-		String curKiller = killer;
-		for(int pos=0; pos<killBoardCount; pos++){
-			if(kills>topKills[pos]){
-				int temp = kills;
-				kills = topKills[pos];
-				topKills[pos] = temp;
-				String tem = curKiller;
-				curKiller = topKillers[pos];
-				topKillers[pos] = tem;
-			}
+
+			//			if(topKillers[n].equals(killer)){
+			//				topKills[n]++;
+			//				int ind = n-1;
+			//				while(ind !=- 1 && topKills[ind] <= topKills[n]){		// changing killer's position on leaderboard if necessary
+			//					String tname = topKillers[n];
+			//					topKillers[n] = topKillers[ind];
+			//					topKillers[ind] = tname;
+			//					int tkill = topKills[n];
+			//					topKills[n] = topKills[ind];
+			//					topKills[ind] = tkill;
+			//					ind--;
+			//				}
+			//				return;
+			//			}
+			//		}
+			//		String curKiller = killer;
+			//		for(int pos=0; pos<killBoardCount; pos++){
+			//			if(kills>topKills[pos]){
+			//				int temp = kills;
+			//				kills = topKills[pos];
+			//				topKills[pos] = temp;
+			//				String tem = curKiller;
+			//				curKiller = topKillers[pos];
+			//				topKillers[pos] = tem;
+			//			}
 		}
 	}
 
