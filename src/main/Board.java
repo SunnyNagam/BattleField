@@ -43,7 +43,7 @@ public class Board extends JPanel implements Runnable{
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 0;
+	long waitTime = 1000;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -272,53 +272,12 @@ public class Board extends JPanel implements Runnable{
 			}
 
 			else{
-				board[curX+speedX][curY+speedY] = new Bullet(move-8, board[playerCoor.get(coorInd).x][playerCoor.get(coorInd).y].getName(),coorInd);	// Creates a bullet in the proper location,
+				board[curX+speedX][curY+speedY] = new Bullet(speedX, speedY, board[playerCoor.get(coorInd).x][playerCoor.get(coorInd).y].getName(),coorInd);	// Creates a bullet in the proper location,
 				bulletCoor.add(new Point(curX+speedX,curY+speedY));
 			}
 		}
 	}
-	private void makeMoveBullet(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
-		/* Given the move, current x and y, the board, and the index in playerCoor:
-		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the
-		 * players y velocity. For example if player entered 4 as thier move according to this control scheme:
-		 *   1  2  3
-		 *   4  0  5
-		 *	 6  7  8
-		 * the player's speedX would be -1 (move to the left) and speedY would be 0 (only moving to the left)
-		 */
-		int speedX = 0, speedY=0;
-		if(move == 1){			// If and else statements set the player's/bullet's velocity (direction) based on move's value
-			speedX = -1;
-			speedY = -1;
-		}
-		else if(move == 2){
-			speedX = 0;
-			speedY = -1;
-		}
-		else if(move == 3){
-			speedX = 1;
-			speedY = -1;
-		}
-		else if(move == 4){
-			speedX = -1;
-			speedY = 0;
-		}
-		else if(move == 5){
-			speedX = 1;
-			speedY = 0;
-		}
-		else if(move == 6){
-			speedX = -1;
-			speedY = 1;
-		}
-		else if(move == 7){
-			speedX = 0;
-			speedY = 1;
-		}
-		else if(move == 8){
-			speedX = 1;
-			speedY = 1;
-		}
+	private void makeMoveBullet(int speedX, int speedY, int curX, int curY, BoardPiece[][] field, int coorInd){
 		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If bullet tries to move outside the board (arrayOutOfBounds) destroy bullet
 			if(board[curX][curY].getName().equals("Bullet")){
 				board[curX][curY] = null;
@@ -371,11 +330,10 @@ public class Board extends JPanel implements Runnable{
 
 		// Recalculate kill board (leaderboard)
 		for(int n=0; n<killBoardCount; n++){
-			if (topKillers[n] == killer){
-				topKills[n] = kills;
-				break;
-			}
 			if (topKills[n] < kills){
+				if (topKillers[n] == killer)
+					topKills[n] = kills;
+				
 				for (int a = killBoardCount-1; a > n ;a--){	//Shuffle everything from the bottom up
 					topKills[a] = topKills[a-1];
 					topKillers[a] = topKillers[a-1];
@@ -463,7 +421,7 @@ public class Board extends JPanel implements Runnable{
 					b--;
 					continue;
 				}
-				makeMoveBullet(board[x][y].move(board), x, y, board, b);
+				makeMoveBullet(board[x][y].getvX(), board[x][y].getvY(), x, y, board, b);
 
 			}
 	}
