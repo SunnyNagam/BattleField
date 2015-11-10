@@ -25,7 +25,7 @@ public class Sunny extends BoardPiece{
 				if(b>=0&&b<=board.length&&board[a][b]!=null){
 					around[bx][by] = board[a][b];
 					if(board[a][b].getName().equals("Bullet")){
-						buldir[bx][by] = board[a][b].getDirection();
+						buldir[bx][by] = board[a][b].getvX();
 					}
 				}
 			}

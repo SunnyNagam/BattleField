@@ -2,14 +2,15 @@ package main;
 
 public class Bullet extends BoardPiece{
 	
-	public Bullet(int direction, String owner, int ownInd){
+	public Bullet(int x, int y, String owner, int ownInd){
 		setName("Bullet");
-		setDirection(direction);
+		setvX(x);
+		setvY(y);
 		setOwner(owner);
 	}
 
 	public int move(BoardPiece[][] board) {
-		return getDirection();
+		return 0;
 	}
 
 }

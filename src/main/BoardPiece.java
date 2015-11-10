@@ -9,7 +9,7 @@ public abstract class BoardPiece {
 	// The number of kills scored by this class (if player)
 	private int kills=0;
 	// Value from 1 through 8 - does not change, as the bullet does not change direction
-	private int direction = 0;
+	private int vX = 0, vY =0;		//Bullet's velocity in x and y direction
 	// This method is called by the Board to execute the piece's move, with a value from 1 through 16.
 	// 1 through 8 indicate movement direction, 9 through 16 indicate firing direction
 	// 1  2  3
@@ -38,14 +38,22 @@ public abstract class BoardPiece {
 	public int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
-
-	public int getDirection() {
-		return direction;
+	public int getvX() {
+		return vX;
 	}
 
-	public void setDirection(int direction) {
-		this.direction = direction;
+	public void setvX(int vX) {
+		this.vX = vX;
 	}
+
+	public int getvY() {
+		return vY;
+	}
+
+	public void setvY(int vY) {
+		this.vY = vY;
+	}
+
 	public int getKills() {
 		return kills;
 	}

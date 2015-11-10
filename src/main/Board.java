@@ -43,7 +43,7 @@ public class Board extends JPanel implements Runnable{
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 1000;
+	long waitTime = 0;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
