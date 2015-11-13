@@ -38,9 +38,9 @@ public class BoardPieceTemplate extends BoardPiece {
 	 	6  7  8
 	 	
 	 	FIRE
-	 	9  8  10
-	 	11    12
-	 	13 14 15
+	 	9  10 11
+	 	12    13
+	 	14 15 16
 	  
 	 */
 	public int move(BoardPiece[][] board) {

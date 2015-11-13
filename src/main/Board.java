@@ -36,7 +36,7 @@ public class Board extends JPanel implements Runnable{
 
 	// Game vars
 	static int boardSize = 100;
-	static int numRandBots = 300;
+	static int numRandBots = 100;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	int pieceSize = HEIGHT/boardSize;
@@ -191,7 +191,7 @@ public class Board extends JPanel implements Runnable{
 		boolean shooting = false;
 		if (move > 9){
 			shooting = true;
-			move -= 9 ;						//Simplifies shooting process
+			move -= 8 ;						//Simplifies shooting process
 		}
 		if(move == 1){			// If and else statements set the player's/bullet's velocity (direction) based on move's value
 			speedX = -1;
