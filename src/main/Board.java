@@ -248,7 +248,7 @@ public class Board extends JPanel implements Runnable{
 				board[curX][curY]=null;
 				return;
 			}
-			else if(board[curX+speedX][curY+speedY]!=null){
+			else if(board[curX+speedX][curY+speedY]!=null&&move!=0){
 				// Do nothing, player tried to walk into another player
 				addToLog(board[curX][curY].getName()+" tried to walk into " + board[curX+speedX][curY+speedY].getName() + ". Sorry, eh.");
 				return;
