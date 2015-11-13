@@ -325,53 +325,36 @@ public class Board extends JPanel implements Runnable{
 		}
 		board[x][y] = null;				// Remove killed player
 
-		// Recalculate kill board (leaderboard)
 		for(int n=0; n<killBoardCount; n++){
-			if (topKills[n] < kills){
-
-				for (int a = killBoardCount-1; a > n ;a--){	//Shuffle everything from the bottom up
-					if (!topKillers[a-1].equals(killer)){
-						topKills[a] = topKills[a-1];
-						topKillers[a] = topKillers[a-1];
-					}
-
-					else{
-						topKills[a] = topKills[a-2];
-						topKillers[a] = topKillers[a-2];
-					}
+			if(topKillers[n].equals(killer)){
+				topKills[n]++;
+				int ind = n-1;
+				int ref =n; //hi
+				while(ind !=- 1 && topKills[ind] <= topKills[ref]){		// changing killer's position on leaderboard if necessary
+					String tname = topKillers[ref];
+					topKillers[ref] = topKillers[ind];
+					topKillers[ind] = tname;
+					int tkill = topKills[ref];
+					topKills[ref] = topKills[ind];
+					topKills[ind] = tkill;
+					ref--;
+					ind--;
 				}
-				topKills[n] = kills;
-				topKillers[n] = killer;
-				break;
+				return;
+			}
+		}
+		String curKiller = killer;
+		for(int pos=0; pos<killBoardCount; pos++){
+			if(kills>topKills[pos]){
+				int temp = kills;
+				kills = topKills[pos];
+				topKills[pos] = temp;
+				String tem = curKiller;
+				curKiller = topKillers[pos];
+				topKillers[pos] = tem;
 			}
 		}
 	}
-
-	//			if(topKillers[n].equals(killer)){
-	//				topKills[n]++;
-	//				int ind = n-1;
-	//				while(ind !=- 1 && topKills[ind] <= topKills[n]){		// changing killer's position on leaderboard if necessary
-	//					String tname = topKillers[n];
-	//					topKillers[n] = topKillers[ind];
-	//					topKillers[ind] = tname;
-	//					int tkill = topKills[n];
-	//					topKills[n] = topKills[ind];
-	//					topKills[ind] = tkill;
-	//					ind--;
-	//				}
-	//				return;
-	//			}
-	//		}
-	//		String curKiller = killer;
-	//		for(int pos=0; pos<killBoardCount; pos++){
-	//			if(kills>topKills[pos]){
-	//				int temp = kills;
-	//				kills = topKills[pos];
-	//				topKills[pos] = temp;
-	//				String tem = curKiller;
-	//				curKiller = topKillers[pos];
-	//				topKillers[pos] = tem;
-	//			}
 
 
 
