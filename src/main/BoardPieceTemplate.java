@@ -4,7 +4,7 @@
 	This is the template class for creating your AI for the battlefield game!
 	
 	RULES AND INFO:
-	 - Wherever you see 'BoardPieceTemplate', replace with your first name
+	 - Wherever you see 'BoardPieceTemplate', replace with your first name (control f and REPLACE)
 	 - If your code returns/encounters an error, your player will be automatically removed from the game
 	 - Do not attempt to code anything that does not involve your player
 	 - You are allowed to add as much code inside and outside of your main method
@@ -13,12 +13,22 @@
 */
 package main;
 
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
 public class BoardPieceTemplate extends BoardPiece {
 	
-	// This is your class' constructor
-	public BoardPieceTemplate(){
+	// This is your class' constructor. DO NOT CHANGE (besides renaming to your own name)!
+	public BoardPieceTemplate(int pieceSize){
 		setName("BoardPieceTemplate");
 		setOwner(getName());
+		try {
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/BoardPieceTemplate.png")));//THIS SHOULD MATCH YOUR IMAGE FILE NAME
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		setImage(resizeImage(getImage(), pieceSize));
 	}
 	
 	/* This is your main method

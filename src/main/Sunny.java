@@ -1,8 +1,19 @@
 package main;
 
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 public class Sunny extends BoardPiece{
-	public Sunny(){
+	public Sunny(int pieceSize){
 		setName("Sunny");
+		try {
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/sunny.png")));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		setImage(resizeImage(getImage(), pieceSize));
 	}
 
 	public int move(BoardPiece[][] board) {

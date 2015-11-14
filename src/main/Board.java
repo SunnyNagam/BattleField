@@ -9,9 +9,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.TextArea;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class Board extends JPanel implements Runnable{
@@ -29,7 +31,7 @@ public class Board extends JPanel implements Runnable{
 	// Image vars
 	private BufferedImage image;
 	private Graphics2D g;
-
+	
 	//Information Log Text Box
 	private TextArea textArea;
 	private String log;
@@ -39,7 +41,7 @@ public class Board extends JPanel implements Runnable{
 	static int numRandBots = 100;
 	boolean drawGrid = false;
 	boolean gameover = false;
-	int pieceSize = HEIGHT/boardSize;
+	static int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
 	long waitTime = 0;
 
@@ -65,7 +67,6 @@ public class Board extends JPanel implements Runnable{
 		running = true;
 		board = new BoardPiece[boardSize][boardSize];
 
-
 		// Creating info log
 		textArea = new TextArea("Battle has begun.", 10, 50, TextArea.SCROLLBARS_VERTICAL_ONLY);
 		textArea.setBounds(HEIGHT, 0, WIDTH-HEIGHT, HEIGHT/2);
@@ -85,27 +86,30 @@ public class Board extends JPanel implements Runnable{
 		loadPlayers();
 		draw();
 	}
-
-	private static void loadPlayers(){		// Load and place players
+	
+	// Load and place players
+	private static void loadPlayers(){		
 		playerCoor.clear();
 
-		board[0][0] = new Sunny();
+		board[0][0] = new Sunny(pieceSize);
 		playerCoor.add(new Point(0,0));
-		board[boardSize-1][0] = new Wesley();
-		playerCoor.add(new Point(boardSize-1,0));
-
-		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
-			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
-			while(board[a][b]!=null){
-				a = rand(0,boardSize-1);
-				b = rand(0,boardSize-1);
-			}
-			// Players are added here
-
-			board[a][b] = new Wesley();
-			playerCoor.add(new Point(a,b));
-			board[a][b].setName(String.valueOf("Player "+x));
-		}
+		board[10][10] = new Sunny(pieceSize);
+		playerCoor.add(new Point(10,10));
+//		board[boardSize-1][0] = new Wesley();
+//		playerCoor.add(new Point(boardSize-1,0));
+//
+//		for(int x=0; x<numRandBots; x++){	// Loading 20 more random players just to stress test, comment out as needed 
+//			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
+//			while(board[a][b]!=null){
+//				a = rand(0,boardSize-1);
+//				b = rand(0,boardSize-1);
+//			}
+//			// Players are added here
+//
+//			board[a][b] = new Wesley();
+//			playerCoor.add(new Point(a,b));
+//			board[a][b].setName(String.valueOf("Player "+x));
+//		}
 	}
 
 	// Runs game
@@ -151,24 +155,33 @@ public class Board extends JPanel implements Runnable{
 			for(int y=0; y<=boardSize; y++)			// draw grid
 				g.drawLine(0,pieceSize*y,pieceSize*boardSize,pieceSize*y);
 		}
-
-		for(int x=0; x<boardSize; x++)			// Draw players
-			for(int y=0; y<boardSize; y++){
-				//g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
-				if(board[x][y]!=null){		//fills the square blue if it's a player or bullet (easier to see until we get sprites)
-					if(board[x][y].getName().equals("Bullet")){
-						g.setColor(Color.red);
-						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
-						g.setColor(Color.black);
-						//g.drawString(String.valueOf(board[x][y].getDirection()),x*pieceSize,y*pieceSize);
-					}
-					else{
-						g.setColor(Color.blue);
-						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
-						g.setColor(Color.black);
-					}
-				}
-			}
+		
+		// Drawing Boardpieces
+//		for(int x=0; x<boardSize; x++)			
+//			for(int y=0; y<boardSize; y++){
+//				//g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
+//				
+//				if(board[x][y]!=null){		//fills the square blue if it's a player or bullet (easier to see until we get sprites)
+//					if(board[x][y].getName().equals("Bullet")){
+//						g.setColor(Color.red);
+//						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
+//						g.setColor(Color.black);
+//						//g.drawString(String.valueOf(board[x][y].getDirection()),x*pieceSize,y*pieceSize);
+//					}
+//					else{
+//						g.setColor(Color.blue);
+//						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
+//						g.setColor(Color.black);
+//					}
+//				}
+//			}
+		// Players
+		for (int a = 0; a < playerCoor.size(); a++)
+		       g.drawImage(board[playerCoor.get(a).x][playerCoor.get(a).y].getImage(), playerCoor.get(a).x, playerCoor.get(a).y, 0, 0, null);
+		// Bullets
+		for (int a = 0; a < bulletCoor.size(); a++)
+		       g.drawImage(board[bulletCoor.get(a).x][bulletCoor.get(a).y].getImage(), bulletCoor.get(a).x, bulletCoor.get(a).y, 0, 0, null);
+		
 
 		// Drawing leaderboard
 		g.drawString("LEADERBOARD", HEIGHT+20, HEIGHT/2+20);
@@ -273,7 +286,7 @@ public class Board extends JPanel implements Runnable{
 			}
 
 			else{
-				board[curX+speedX][curY+speedY] = new Bullet(speedX, speedY, board[playerCoor.get(coorInd).x][playerCoor.get(coorInd).y].getName(),coorInd);	// Creates a bullet in the proper location,
+				board[curX+speedX][curY+speedY] = new Bullet(speedX, speedY, board[playerCoor.get(coorInd).x][playerCoor.get(coorInd).y].getName(),coorInd, pieceSize);	// Creates a bullet in the proper location,
 				bulletCoor.add(new Point(curX+speedX,curY+speedY));
 			}
 		}
@@ -408,7 +421,6 @@ public class Board extends JPanel implements Runnable{
 					continue;
 				}
 				makeMoveBullet(board[x][y].getvX(), board[x][y].getvY(), x, y, board, b);
-
 			}
 	}
 
@@ -417,13 +429,14 @@ public class Board extends JPanel implements Runnable{
 		textArea.setText(log);
 		textArea.setCaretPosition(textArea.getText().length()); // Auto scroll to bottom
 	}
-
-	private void drawToScreen() {						// Draws game with formating
+	
+	// Draws game with formating
+	private void drawToScreen() {						
 		Graphics g2 = getGraphics();
-		g2.drawImage(image, 0, 0, WIDTH,  HEIGHT, null);
+		g2.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
 		g2.dispose();
 	}
-
+	
 	public static int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
