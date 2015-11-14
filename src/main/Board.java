@@ -155,7 +155,7 @@ public class Board extends JPanel implements Runnable{
 			for(int y=0; y<=boardSize; y++)			// draw grid
 				g.drawLine(0,pieceSize*y,pieceSize*boardSize,pieceSize*y);
 		}
-		
+		// hi wes
 		// Players
 		for (int a = 0; a < playerCoor.size(); a++){
 			if(board[playerCoor.get(a).x][playerCoor.get(a).y]!=null)
