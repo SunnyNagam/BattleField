@@ -1,12 +1,22 @@
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class Wesley extends BoardPiece{
 	ArrayList<Integer> ints = new ArrayList<Integer>();
 	int count =0;
-	public Wesley(){
+	public Wesley(int pieceSize){
 		setName("Wesley");
+		try {
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/sunny.png")));
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		//setImage(resizeImage(getImage(), pieceSize));
 	}
 	@Override
 	public int move(BoardPiece[][] board) {
@@ -30,6 +40,6 @@ public class Wesley extends BoardPiece{
 //			return 4;
 //		}
 //		return 0;
-		return rand(1,16);
+		return rand(0,16);
 	}
 }
