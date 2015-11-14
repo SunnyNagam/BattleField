@@ -31,19 +31,19 @@ public class Board extends JPanel implements Runnable{
 	// Image vars
 	private BufferedImage image;
 	private Graphics2D g;
-	
+
 	//Information Log Text Box
 	private TextArea textArea;
 	private String log;
 
 	// Game vars
-	static int boardSize = 60;
-	static int numRandBots = 20;
+	static int boardSize = 30;
+	static int numRandBots = 30;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	static int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 0;
+	long waitTime = 100;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -86,17 +86,15 @@ public class Board extends JPanel implements Runnable{
 		loadPlayers();
 		draw();
 	}
-	
+
 	// Load and place players
 	private static void loadPlayers(){		
 		playerCoor.clear();
 
-		board[0][0] = new Sunny(pieceSize);
-		playerCoor.add(new Point(0,0));
-		board[10][10] = new Wesley(pieceSize);
-		playerCoor.add(new Point(10,10));
-//		board[boardSize-1][0] = new Wesley();
-//		playerCoor.add(new Point(boardSize-1,0));
+		//		board[0][0] = new Sunny(pieceSize);
+		//		playerCoor.add(new Point(0,0));
+		board[boardSize-1][0] = new Wesley(pieceSize);
+		playerCoor.add(new Point(boardSize-1,0));
 
 		for(int x=0; x<numRandBots; x++){	// Loading numBoard more random players just to stress test, comment out as needed 
 			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
@@ -155,18 +153,18 @@ public class Board extends JPanel implements Runnable{
 			for(int y=0; y<=boardSize; y++)			// draw grid
 				g.drawLine(0,pieceSize*y,pieceSize*boardSize,pieceSize*y);
 		}
-		// hi wes
+
 		// Players
 		for (int a = 0; a < playerCoor.size(); a++){
 			if(board[playerCoor.get(a).x][playerCoor.get(a).y]!=null)
-		       g.drawImage(board[playerCoor.get(a).x][playerCoor.get(a).y].getImage(), playerCoor.get(a).x*pieceSize, playerCoor.get(a).y*pieceSize, null);
+				g.drawImage(board[playerCoor.get(a).x][playerCoor.get(a).y].getImage(), playerCoor.get(a).x*pieceSize, playerCoor.get(a).y*pieceSize, null);
 		}
 		// Bullets
 		for (int a = 0; a < bulletCoor.size(); a++){
 			if(board[bulletCoor.get(a).x][bulletCoor.get(a).y]!=null)
-		       g.drawImage(board[bulletCoor.get(a).x][bulletCoor.get(a).y].getImage(), bulletCoor.get(a).x*pieceSize, bulletCoor.get(a).y*pieceSize, null);
+				g.drawImage(board[bulletCoor.get(a).x][bulletCoor.get(a).y].getImage(), bulletCoor.get(a).x*pieceSize, bulletCoor.get(a).y*pieceSize, null);
 		}
-		
+
 
 		// Drawing leaderboard
 		g.drawString("LEADERBOARD", HEIGHT+20, HEIGHT/2+20);
@@ -175,7 +173,7 @@ public class Board extends JPanel implements Runnable{
 		}
 	}
 
-	private void makeMove(int move, int curX, int curY, BoardPiece[][] field, int coorInd){
+	private void makeMove(int move, int curX, int curY, int coorInd){
 		/* Given the move, current x and y, the board, and the index in playerCoor:
 		 * either moves the player or shoots. 'speedX' is the players x velocity, 'speedY' is the
 		 * players y velocity. For example if player entered 4 as thier move according to this control scheme:
@@ -184,7 +182,7 @@ public class Board extends JPanel implements Runnable{
 		 *	 6  7  8
 		 * the player's speedX would be -1 (move to the left) and speedY would be 0 (only moving to the left)
 		 */
-		//System.out.println(board[curX][curY].getName()+" made a move of "+move+" from ("+curX+", "+curY+")");
+
 		int speedX = 0, speedY=0;
 		// To track if the player is shooting or moving
 		boolean shooting = false;
@@ -235,23 +233,24 @@ public class Board extends JPanel implements Runnable{
 			// Movement
 			if(board[curX+speedX][curY+speedY]!=null && board[curX+speedX][curY+speedY].getName().equals("Bullet")){
 				addToLog((board[curX][curY].getName()+" walked into " + board[curX+speedX][curY+speedY].getOwner() +  "'s bullet and died!"));
+				//System.out.println("with a move of "+move+" from ("+curX+", "+curY+") walked into a bullet at ("+(curX+speedX)+","+(curY+speedY)+")");
 				killPiece(curX,curY,board[curX+speedX][curY+speedY].getOwner());	//kills player
 				// Delete the bullet you ran into
 				board[curX+speedX][curY+speedY] = null;
 				board[curX][curY]=null;
-				return;
 			}
-			else if(board[curX+speedX][curY+speedY]!=null&&move!=0){
+			else if(board[curX+speedX][curY+speedY]!=null){
 				// Do nothing, player tried to walk into another player
 				addToLog(board[curX][curY].getName()+" tried to walk into " + board[curX+speedX][curY+speedY].getName());
-				return;
 			}
 			else{		// Legitimate move, moving to new coordinates
+				//System.out.println(board[curX][curY].getName()+" made a move of "+move+" from ("+curX+", "+curY+") to ("
+				//+(curX+speedX)+", "+(curY+speedY)+")");
 				board[curX+speedX][curY+speedY] = board[curX][curY];
 				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
 				board[curX][curY] = null;
-				return;
 			}
+			return;
 		}
 		else {	// Executing shooting (move>=9)
 			// Checking to see if the space is occupied.
@@ -269,17 +268,14 @@ public class Board extends JPanel implements Runnable{
 			else{
 				board[curX+speedX][curY+speedY] = new Bullet(speedX, speedY, board[playerCoor.get(coorInd).x][playerCoor.get(coorInd).y].getName(),coorInd, pieceSize);	// Creates a bullet in the proper location,
 				bulletCoor.add(new Point(curX+speedX,curY+speedY));
-				return;
 			}
 		}
 	}
 
-	private void makeMoveBullet(int speedX, int speedY, int curX, int curY, BoardPiece[][] field, int coorInd){
+	private void makeMoveBullet(int speedX, int speedY, int curX, int curY, int coorInd){
 		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If bullet tries to move outside the board (arrayOutOfBounds) destroy bullet
-			if(board[curX][curY].getName().equals("Bullet")){
-				board[curX][curY] = null;
-				bulletCoor.remove(coorInd);
-			}
+			board[curX][curY] = null;
+			bulletCoor.remove(coorInd);
 			return;
 		}
 		// Executing bullet actions	
@@ -290,14 +286,16 @@ public class Board extends JPanel implements Runnable{
 				bulletCoor.remove(coorInd);
 			}
 			else {
-				addToLog(board[curX+speedX][curY+speedY].getName() + " has been killed by " + board[curX][curY].getOwner() + "!");
+				addToLog(board[curX+speedX][curY+speedY].getName() + " has been killed by " + board[curX][curY].getOwner() + "!");	// Kill a player if the bullet hits him
 				killPiece(curX+speedX, curY+speedY, board[curX][curY].getOwner());
 				board[curX][curY] = null;
 				bulletCoor.remove(coorInd);
 			}
 			return;
 		}
-		else{	// Moving the bullet
+		else{				// Moving the bullet
+			//System.out.println(board[curX][curY].getName()+" made a move from ("+curX+", "+curY+") to ("
+			//	+(curX+speedX)+", "+(curY+speedY)+")");
 			board[curX+speedX][curY+speedY] = board[curX][curY];
 			bulletCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
 			board[curX][curY] = null;
@@ -309,7 +307,6 @@ public class Board extends JPanel implements Runnable{
 		if (board[x][y] != null && board[x][y].getName() != "Bullet")		// Don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);										// Graveyard for post game statistics maybe
 
-		// TODO FIX SUICIDES?
 		int kills=0;
 		for(int px=0; px<playerCoor.size(); px++){
 			if(board[playerCoor.get(px).x][playerCoor.get(px).y]!=null&&board[playerCoor.get(px).x][playerCoor.get(px).y].getName().equals(killer)){
@@ -323,17 +320,13 @@ public class Board extends JPanel implements Runnable{
 		for(int n=0; n<killBoardCount; n++){
 			if(topKillers[n].equals(killer)){
 				topKills[n]++;
-				int ind = n-1;
-				int ref = n;
-				while(ind !=- 1 && topKills[ind] <= topKills[ref]){		// changing killer's position on leaderboard if necessary
-					String tname = topKillers[ref];
-					topKillers[ref] = topKillers[ind];
+				for(int ind = n-1; ind !=- 1 && topKills[ind] <= topKills[ind+1]; ind--){		// changing killer's position on leaderboard if necessary
+					String tname = topKillers[ind+1];
+					topKillers[ind+1] = topKillers[ind];
 					topKillers[ind] = tname;
-					int tkill = topKills[ref];
-					topKills[ref] = topKills[ind];
+					int tkill = topKills[ind+1];
+					topKills[ind+1] = topKills[ind];
 					topKills[ind] = tkill;
-					ref--;
-					ind--;
 				}
 				return;
 			}
@@ -354,40 +347,46 @@ public class Board extends JPanel implements Runnable{
 	private void update() {								// Updates current game state
 		// Copy of board
 		BoardPiece[][] boardCopy = new BoardPiece[boardSize][boardSize];
-		for (int x = 0; x < boardSize; x++)			
-			for (int y = 0; y < boardSize; y++){
-				boardCopy[x][y] = board[x][y];
+		BoardPiece[][] boardCopyOrig = new BoardPiece[boardSize][boardSize];
+		for (int a = 0; a < boardSize; a++)			
+			for (int b = 0; b < boardSize; b++){
+				boardCopyOrig[a][b] = board[a][b];
+				boardCopy[a][b] = boardCopyOrig[a][b];
 			}
-		// Get moves		
+		// Make player moves		
 		for (int p = 0; p < playerCoor.size(); p++){
-			int x = playerCoor.get(p).x;
+			int x = playerCoor.get(p).x;		// players x and y
 			int y = playerCoor.get(p).y;
 			if(board[x][y]==null){
 				playerCoor.remove(p);
 				p--;
-				if(playerCoor.size()==1){
-					// Only one guy left
-					//log = "";
-					for(int n=0; n<4; n++)
-						log+="\n";
-					log+=board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
-					for(int n=0; n<5; n++)
-						log+="\n";
+				if(playerCoor.size()==1){           // Only one guy left
+					log+= "\n\n\n\n";
+					log+= board[playerCoor.get(0).x][playerCoor.get(0).y].getName()+" WON!!!!";
+					log+= "\n\n\n\n";
 					textArea.setText(log);
 					textArea.setCaretPosition(textArea.getText().length()); // Auto scroll to bottom
 					//gameover = true;
-					//break;
 				}
 				continue;
 			}
+			boolean tampered = false;			// Security to prevent people from tampering with the board they are provided
+			for (int a = 0; a < boardSize&&!tampered; a++)		
+				for (int b = 0; b < boardSize &&!tampered; b++)
+					if(boardCopy[a][b] != boardCopyOrig[a][b])
+						tampered = true;
+			if(tampered)
+				for (int a = 0; a < boardSize; a++)			
+					for (int b = 0; b < boardSize; b++)
+						boardCopy[a][b] = boardCopyOrig[a][b];
 			try{
-				makeMove(board[x][y].move(boardCopy)
-						,x,y,board,p);
+				makeMove(board[x][y].move(boardCopy),x,y,p);
 			}catch(Exception e){
-//				e.printStackTrace();
-//				System.out.println( " did nothing due to illegal output. Or code crashing.");
+				//e.printStackTrace();
+				//System.out.println(board[x][y].getName()+" did nothing due to code crashing.");
 			}
 		}
+
 		// Move Bullets
 		for (int times = 0; times < 2; times++)		// Speed of bullets (distance covered per turn, currently set at two tiles per turn)
 			for (int b = 0; b < bulletCoor.size(); b++){
@@ -398,7 +397,7 @@ public class Board extends JPanel implements Runnable{
 					b--;
 					continue;
 				}
-				makeMoveBullet(board[x][y].getvX(), board[x][y].getvY(), x, y, board, b);
+				makeMoveBullet(board[x][y].getvX(), board[x][y].getvY(), x, y, b);
 			}
 	}
 
@@ -407,14 +406,14 @@ public class Board extends JPanel implements Runnable{
 		textArea.setText(log);
 		textArea.setCaretPosition(textArea.getText().length()); // Auto scroll to bottom
 	}
-	
+
 	// Draws game with formating
 	private void drawToScreen() {						
 		Graphics g2 = getGraphics();
 		g2.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
 		g2.dispose();
 	}
-	
+
 	public static int rand(double d, double e){
 		return (int) (d + (int)(Math.random()*((e-d)+1)));
 	}
