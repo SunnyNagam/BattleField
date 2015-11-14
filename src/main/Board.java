@@ -37,8 +37,8 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 100;
-	static int numRandBots = 30;
+	static int boardSize = 60;
+	static int numRandBots = 20;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	static int pieceSize = HEIGHT/boardSize;

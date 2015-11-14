@@ -13,7 +13,7 @@ public class Sunny extends BoardPiece{
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		//setImage(resizeImage(getImage(), pieceSize));	// doesnt work
+		setImage(resizeImage(getImage(), pieceSize));	// doesnt work
 	}
 
 	public int move(BoardPiece[][] board) {

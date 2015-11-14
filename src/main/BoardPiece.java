@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 public abstract class BoardPiece {
@@ -73,15 +74,15 @@ public abstract class BoardPiece {
 	public void incrementKills(){
 		kills++;
 	}
-	
 	// Resizing images to certain dimensions
-	public BufferedImage resizeImage(BufferedImage image, int pieceSize) {
-       int type = 0;			// Checks to see if image is the correct type (ARBG)
-       type = image.getType() == 0? BufferedImage.TYPE_INT_ARGB : image.getType();			// If it isn't set it as that type
-       BufferedImage resizedImage = new BufferedImage(pieceSize, pieceSize, type);			// Change image to match dimensions
-//       Graphics2D g = resizedImage.createGraphics(); 
-//       g.drawImage(image, pieceSize, pieceSize, pieceSize, pieceSize, null);
-//       g.dispose();
-       return resizedImage;
-    }
+	public static BufferedImage resizeImage(BufferedImage img, int size) { 
+	    Image tmp = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+	    BufferedImage dimg = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+
+	    Graphics2D g2d = dimg.createGraphics();
+	    g2d.drawImage(tmp, 0, 0, null);
+	    g2d.dispose();
+
+	    return dimg;
+	}  
 }

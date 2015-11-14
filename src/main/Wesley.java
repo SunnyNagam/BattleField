@@ -16,7 +16,7 @@ public class Wesley extends BoardPiece{
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		//setImage(resizeImage(getImage(), pieceSize));
+		setImage(resizeImage(getImage(), pieceSize));
 	}
 	@Override
 	public int move(BoardPiece[][] board) {
