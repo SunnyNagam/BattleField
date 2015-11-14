@@ -11,7 +11,7 @@ public class Wesley extends BoardPiece{
 	public Wesley(int pieceSize){
 		setName("Wesley");
 		try {
-			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/sunny.png")));
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/"+getName()+".png")));
 		}
 		catch (IOException e){
 			e.printStackTrace();

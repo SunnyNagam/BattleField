@@ -23,7 +23,7 @@ public class BoardPieceTemplate extends BoardPiece {
 		setName("BoardPieceTemplate");
 		setOwner(getName());
 		try {
-			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/BoardPieceTemplate.png")));//THIS SHOULD MATCH YOUR IMAGE FILE NAME
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/"+getName()+".png")));
 		}
 		catch (IOException e){
 			e.printStackTrace();

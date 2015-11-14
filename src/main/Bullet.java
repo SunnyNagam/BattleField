@@ -12,7 +12,7 @@ public class Bullet extends BoardPiece{
 		setvY(y);
 		setOwner(owner);
 		try {
-			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/bullet.png")));	// Setting the boardpiece's image
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/"+getName()+".png")));	// Setting the boardpiece's image
 		}
 		catch (IOException e){
 			e.printStackTrace();

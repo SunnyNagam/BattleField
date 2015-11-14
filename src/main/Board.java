@@ -37,13 +37,13 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 30;
-	static int numRandBots = 0;
-	boolean drawGrid = true;
+	static int boardSize = 100;
+	static int numRandBots = 30;
+	boolean drawGrid = false;
 	boolean gameover = false;
 	static int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 200;
+	long waitTime = 0;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -156,26 +156,6 @@ public class Board extends JPanel implements Runnable{
 				g.drawLine(0,pieceSize*y,pieceSize*boardSize,pieceSize*y);
 		}
 		
-		// Drawing Boardpieces
-//		for(int x=0; x<boardSize; x++)			
-//			for(int y=0; y<boardSize; y++){
-//				//g.drawString(board[x][y]==null?"Empty":board[x][y].getName(), x*pieceSize+5, y*pieceSize + 15);
-//				
-//				if(board[x][y]!=null){		//fills the square blue if it's a player or bullet (easier to see until we get sprites)
-//					if(board[x][y].getName().equals("Bullet")){
-//						g.setColor(Color.red);
-//						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
-//						g.setColor(Color.black);
-//						//g.drawString(String.valueOf(board[x][y].getDirection()),x*pieceSize,y*pieceSize);
-//					}
-//					else{
-//						g.setColor(Color.blue);
-//						g.fillRect(x*pieceSize,y*pieceSize,pieceSize,pieceSize);
-//						g.setColor(Color.black);
-//					}
-//				}
-//			}
-		
 		// Players
 		for (int a = 0; a < playerCoor.size(); a++){
 			if(board[playerCoor.get(a).x][playerCoor.get(a).y]!=null)
@@ -204,7 +184,7 @@ public class Board extends JPanel implements Runnable{
 		 *	 6  7  8
 		 * the player's speedX would be -1 (move to the left) and speedY would be 0 (only moving to the left)
 		 */
-		System.out.println(board[curX][curY].getName()+" made a move of "+move+" from ("+curX+", "+curY+")");
+		//System.out.println(board[curX][curY].getName()+" made a move of "+move+" from ("+curX+", "+curY+")");
 		int speedX = 0, speedY=0;
 		// To track if the player is shooting or moving
 		boolean shooting = false;
@@ -215,10 +195,6 @@ public class Board extends JPanel implements Runnable{
 		if(move == 1){			// If and else statements set the player's/bullet's velocity (direction) based on move's value
 			speedX = -1;
 			speedY = -1;
-		}
-		else if(move == 0){
-			speedX = 0;
-			speedY = 0;
 		}
 		else if(move == 2){
 			speedX = 0;
@@ -251,8 +227,7 @@ public class Board extends JPanel implements Runnable{
 		else{			// Player loses a turn if move is outside the domain 0 <= move <= 16
 			return;
 		}
-		if (move==0||curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
-			System.out.println("his move was out of range.");
+		if (curX + speedX >= boardSize || curX + speedX < 0 || curY + speedY >= boardSize || curY + speedY < 0){   // If player tries to move outside the board (arrayOutOfBounds) they lose a turn
 			return;
 		}
 		//Executing player actions
@@ -272,8 +247,6 @@ public class Board extends JPanel implements Runnable{
 				return;
 			}
 			else{		// Legitimate move, moving to new coordinates
-				System.out.println(board[curX][curY].getName()+" moved from ("+curX+", "+curY+")"+" to "
-						+ "("+(curX+speedX)+", "+(curY+speedY)+") with a move of: "+move);
 				board[curX+speedX][curY+speedY] = board[curX][curY];
 				playerCoor.set(coorInd, new Point(curX+speedX,curY+speedY));
 				board[curX][curY] = null;
@@ -390,7 +363,6 @@ public class Board extends JPanel implements Runnable{
 			int x = playerCoor.get(p).x;
 			int y = playerCoor.get(p).y;
 			if(board[x][y]==null){
-				System.out.println("oh noo!");
 				playerCoor.remove(p);
 				p--;
 				if(playerCoor.size()==1){
@@ -412,8 +384,8 @@ public class Board extends JPanel implements Runnable{
 				makeMove(board[x][y].move(boardCopy)
 						,x,y,board,p);
 			}catch(Exception e){
-				e.printStackTrace();
-				System.out.println( " did nothing due to illegal output. Or code crashing.");
+//				e.printStackTrace();
+//				System.out.println( " did nothing due to illegal output. Or code crashing.");
 			}
 		}
 		// Move Bullets
@@ -422,7 +394,6 @@ public class Board extends JPanel implements Runnable{
 				int x = bulletCoor.get(b).x;
 				int y = bulletCoor.get(b).y;
 				if(board[x][y] == null){
-					System.out.println("pointer mismatch");
 					bulletCoor.remove(b);
 					b--;
 					continue;

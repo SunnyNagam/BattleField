@@ -8,12 +8,12 @@ public class Sunny extends BoardPiece{
 	public Sunny(int pieceSize){
 		setName("Sunny");
 		try {
-			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/sunny.png")));
+			setImage(ImageIO.read(getClass().getResourceAsStream("/Images/"+getName()+".png")));
 		}
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		//setImage(resizeImage(getImage(), pieceSize));
+		//setImage(resizeImage(getImage(), pieceSize));	// doesnt work
 	}
 
 	public int move(BoardPiece[][] board) {
