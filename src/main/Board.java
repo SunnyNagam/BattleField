@@ -383,7 +383,7 @@ public class Board extends JPanel implements Runnable{
 						boardCopy[a][b] = boardCopyOrig[a][b];
 			try{
 				makeMove(board[x][y].move(boardCopy),x,y,p);
-			}catch(Exception e){
+			}catch(Exception |StackOverflowError e){
 				addToLog(board[x][y].getName()+" CRASHED and being naughty in Mr. Chow's sight, shall snuff it.");
 				killPiece(x,y,"");
 				//e.printStackTrace();
