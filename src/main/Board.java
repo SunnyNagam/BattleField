@@ -37,7 +37,7 @@ public class Board extends JPanel implements Runnable{
 	private String log;
 
 	// Game vars
-	static int boardSize = 30;
+	static int boardSize = 27;
 	static int numRandBots = 30;
 	boolean drawGrid = false;
 	boolean gameover = false;
@@ -75,7 +75,6 @@ public class Board extends JPanel implements Runnable{
 		textArea.setEditable(false);						// Preventing the box from being editable
 		textArea.setFont(new Font("Serif", Font.PLAIN, 19));// Setting font
 		log ="";
-
 		// Clearing kill board
 		for(int x=0; x<killBoardCount; x++){
 			topKills[x] = 0;

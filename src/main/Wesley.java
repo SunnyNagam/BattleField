@@ -26,7 +26,6 @@ public class Wesley extends BoardPiece{
 		for(; x<board.length; x++){					//Finding my x and y
 			for(y=0; y<board[x].length; y++){
 				if(board[x][y]!= null && !board[x][y].getName().equals("Wesley")){
-					while(true);
 				}
 			}
 		}

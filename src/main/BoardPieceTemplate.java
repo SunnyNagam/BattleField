@@ -2,6 +2,8 @@
 	PLAYER AI TEMPLATE CLASS
 	
 	This is the template class for creating your AI for the battlefield game!
+	Please include a png file (of any size) preferably, a 30x30 pixel image.
+	Note: Your image must be a square, if it is not it will be squished.
 	
 	RULES AND INFO:
 	 - Wherever you see 'BoardPieceTemplate', replace with your first name (control f and REPLACE)

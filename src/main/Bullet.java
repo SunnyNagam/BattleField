@@ -17,7 +17,7 @@ public class Bullet extends BoardPiece{
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		setImage(resizeImage(getImage(), pieceSize));				// Resizing to fit dimensions
+		setImage(resizeImage(getImage(), pieceSize/4));				// Resizing to fit dimensions
 	}
 
 	public int move(BoardPiece[][] board) {
