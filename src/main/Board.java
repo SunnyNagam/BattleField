@@ -104,7 +104,7 @@ public class Board extends JPanel implements Runnable{
 			}
 			// Players are added here
 
-			board[a][b] = new Wesley(pieceSize);
+			board[a][b] = new Sunny(pieceSize);
 			playerCoor.add(new Point(a,b));
 			board[a][b].setName(String.valueOf("Player "+x));
 		}
@@ -316,7 +316,9 @@ public class Board extends JPanel implements Runnable{
 			}
 		}
 		board[x][y] = null;				// Remove killed player
-
+		
+		if (killer.equals(""))return;	// Don't change leaderboard if player removed by crashing
+		
 		for(int n=0; n<killBoardCount; n++){
 			if(topKillers[n].equals(killer)){
 				topKills[n]++;
@@ -382,6 +384,8 @@ public class Board extends JPanel implements Runnable{
 			try{
 				makeMove(board[x][y].move(boardCopy),x,y,p);
 			}catch(Exception e){
+				addToLog(board[x][y].getName()+" CRASHED and being naughty in Mr. Chow's sight, shall snuff it.");
+				killPiece(x,y,"");
 				//e.printStackTrace();
 				//System.out.println(board[x][y].getName()+" did nothing due to code crashing.");
 			}

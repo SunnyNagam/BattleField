@@ -25,13 +25,13 @@ public class Wesley extends BoardPiece{
 		boolean found = false;
 		for(; x<board.length; x++){					//Finding my x and y
 			for(y=0; y<board[x].length; y++){
-				if(board[x][y]!= null && board[x][y].getName()==getName()){
-					found = true;
-					break;
+				if(board[x][y]!= null && !board[x][y].getName().equals("Wesley")){
+					int o = 9/0;
 				}
 			}
-			if(found) break;
 		}
+		
+		
 //		if(x>0||!found){
 ////			if(board[x-1][y]==null)
 ////				return 4;
