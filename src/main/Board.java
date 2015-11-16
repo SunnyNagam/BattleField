@@ -373,10 +373,12 @@ public class Board extends JPanel implements Runnable{
 				continue;
 			}
 			boolean tampered = false;			// Security to prevent people from tampering with the board they are provided
-			for (int a = 0; a < boardSize&&!tampered; a++)		
-				for (int b = 0; b < boardSize &&!tampered; b++)
-					if(boardCopy[a][b] != boardCopyOrig[a][b])
+			for (int a = 0; a < boardSize; a++)		
+				for (int b = 0; b < boardSize; b++)
+					if(boardCopy[a][b] != boardCopyOrig[a][b]){
 						tampered = true;
+						break;
+					}
 			if(tampered)
 				for (int a = 0; a < boardSize; a++)			
 					for (int b = 0; b < boardSize; b++)
