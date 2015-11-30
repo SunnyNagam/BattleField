@@ -40,7 +40,9 @@ public class BoardPieceTemplate extends BoardPiece {
 	    - null (nothing there)
 	    - "bullet"
 	    - other players represented by their first names (ex. "Bob")
-	    
+	    	For example if Bob is standing in coordinates (2,5) then board[2][5].getName() will give you the name "Bob"
+	    	if nothing is in coordinates (2,5) then board[2][5] will be null
+	    	if a bullet is in coordinates (2,5) then board[2][5].getName() will give you the name "Bullet"
 	    Your method must return an integer value from 0 to 16, inclusive.
 	    1 through 8 indicate movement direction, 9 through 16 indicate firing direction, 0 does nothing
 	    
@@ -57,7 +59,7 @@ public class BoardPieceTemplate extends BoardPiece {
 	 */
 	public int move(BoardPiece[][] board) {
 		// TODO put codez in here
-		return 0;
+		return 0;			// return number in between 0 and 16
 	}
 
 }

@@ -20,7 +20,7 @@ public class Board extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
 	// Dimensions
 	public static final int WIDTH = 1200;
-	public static final int HEIGHT = 800;
+	public static final int HEIGHT = 700;
 
 	// Game thread
 	private Thread thread;
@@ -38,12 +38,13 @@ public class Board extends JPanel implements Runnable{
 
 	// Game vars
 	static int boardSize = 27;
-	static int numRandBots = 30;
+	static int numRandBots = 27*26;
 	boolean drawGrid = false;
 	boolean gameover = false;
 	static int pieceSize = HEIGHT/boardSize;
 	private static BoardPiece[][] board = new BoardPiece[boardSize][boardSize];
-	long waitTime = 100;
+	long waitTime = 100;			// pause between turns
+	private int noKillTurns = 0;
 
 	// Store the defeated players
 	LinkedList<BoardPiece> graveyard = new LinkedList<BoardPiece>();
@@ -60,7 +61,8 @@ public class Board extends JPanel implements Runnable{
 	// The players who got those kills
 	String[] topKillers = new String[killBoardCount];
 
-
+	static int a =0;
+	static int b=0;
 	public void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
@@ -68,7 +70,7 @@ public class Board extends JPanel implements Runnable{
 		board = new BoardPiece[boardSize][boardSize];
 
 		// Creating info log
-		textArea = new TextArea("Battle has begun.", 10, 50, TextArea.SCROLLBARS_VERTICAL_ONLY);
+		textArea = new TextArea("Battle is beginning...", 10, 50, TextArea.SCROLLBARS_VERTICAL_ONLY);
 		textArea.setBounds(HEIGHT, 0, WIDTH-HEIGHT, HEIGHT/2);
 		add(textArea);										// Add it to the screen
 		setLayout(new BorderLayout());						// Required
@@ -85,27 +87,73 @@ public class Board extends JPanel implements Runnable{
 		loadPlayers();
 		draw();
 	}
-
+	public static void sC(){
+		a = rand(0,boardSize-1);
+		b = rand(0,boardSize-1);
+		while(board[a][b]!=null){
+			a = rand(0,boardSize-1);
+			b = rand(0,boardSize-1);
+		}
+	}
 	// Load and place players
 	private static void loadPlayers(){		
 		playerCoor.clear();
-
-		//		board[0][0] = new Sunny(pieceSize);
-		//		playerCoor.add(new Point(0,0));
-		board[boardSize-1][0] = new Wesley(pieceSize);
-		playerCoor.add(new Point(boardSize-1,0));
+		
+		sC();
+		board[a][b] = new Charlie(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Ali(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Ammar(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Amnah(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Claire(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new DaFangsta(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new davis(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+//		board[a][b] = new HosunLee(pieceSize);		//Replace "Wesley" With the name of your class
+//		playerCoor.add(new Point(a,b));
+//		sC();
+		board[a][b] = new JWang(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Maggie(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Remo(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Sam(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Sanchit(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		sC();
+		board[a][b] = new Yaamz(pieceSize);		//Replace "Wesley" With the name of your class
+		playerCoor.add(new Point(a,b));
+		
 
 		for(int x=0; x<numRandBots; x++){	// Loading numBoard more random players just to stress test, comment out as needed 
-			int a = rand(0,boardSize-1), b = rand(0,boardSize-1);
+			a = rand(0,boardSize-1);
+			b = rand(0,boardSize-1);
 			while(board[a][b]!=null){
 				a = rand(0,boardSize-1);
 				b = rand(0,boardSize-1);
 			}
 			// Players are added here
-
-			board[a][b] = new Sunny(pieceSize);
+			board[a][b] =new Wesley(pieceSize);
 			playerCoor.add(new Point(a,b));
-			board[a][b].setName(String.valueOf("Player "+x));
+			board[a][b].setName(String.valueOf("Jacob "+x));
 		}
 	}
 
@@ -170,6 +218,8 @@ public class Board extends JPanel implements Runnable{
 		for(int x=0; x<killBoardCount; x++){
 			g.drawString(new String((x+1)+".)    "+topKillers[x]+"    Kills: "+topKills[x]), HEIGHT+25, (HEIGHT/2+20)+((x+1)*20));
 		}
+		
+		g.drawString("Turns since last kill: " + noKillTurns, HEIGHT, HEIGHT-HEIGHT/6);
 	}
 
 	private void makeMove(int move, int curX, int curY, int coorInd){
@@ -306,6 +356,8 @@ public class Board extends JPanel implements Runnable{
 		if (board[x][y] != null && board[x][y].getName() != "Bullet")		// Don't add nothings and bullets to the graveyard
 			graveyard.add(board[x][y]);										// Graveyard for post game statistics maybe
 
+		noKillTurns = 0;
+		
 		int kills=0;
 		for(int px=0; px<playerCoor.size(); px++){
 			if(board[playerCoor.get(px).x][playerCoor.get(px).y]!=null&&board[playerCoor.get(px).x][playerCoor.get(px).y].getName().equals(killer)){
@@ -316,7 +368,7 @@ public class Board extends JPanel implements Runnable{
 		}
 		board[x][y] = null;				// Remove killed player
 		
-		if (killer.equals(""))return;	// Don't change leaderboard if player removed by crashing
+		if (killer!= null && killer.equals(""))return;	// Don't change leaderboard if player removed by crashing
 		
 		for(int n=0; n<killBoardCount; n++){
 			if(topKillers[n].equals(killer)){
@@ -390,6 +442,8 @@ public class Board extends JPanel implements Runnable{
 				//e.printStackTrace();
 				//System.out.println(board[x][y].getName()+" did nothing due to code crashing.");
 			}
+			noKillTurns++;
+			
 		}
 
 		// Move Bullets
